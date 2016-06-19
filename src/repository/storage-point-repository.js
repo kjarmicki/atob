@@ -1,7 +1,5 @@
 'use strict';
 
-import {inherit} from '../util/util';
-import repository from './repository';
 import pointModel from '../model/point';
 
 /*
@@ -39,5 +37,5 @@ export default function storagePointRepository(storage) {
         }
     }
 
-    return inherit(repository, {store, retrieveAll});
+    return {store, retrieveAll};
 }

@@ -4,7 +4,7 @@
   "description": "Simple app getting you from point A to B",
   "main": "index.js",
   "scripts": {
-    "test": "tape -r babel-register test/**/*-test.js"
+    "test": "tape -r babel-register 'test/**/*-test.js'"
   },
   "author": "Krystian Jarmicki",
   "license": "ISC",
