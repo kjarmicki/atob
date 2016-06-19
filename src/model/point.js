@@ -1,5 +1,7 @@
 'use strict';
 
+import geolib from 'geolib';
+
 /*
  * Object factory of models representing point on a map
  */
@@ -33,7 +35,11 @@ export default function point({name, latitude, longitude, createdAt}) {
     }
 
     function distanceFrom(otherPoint) {
-        return 0;
+        return geolib.getDistance(
+            {latitude, longitude},
+            {latitude: otherPoint.getLatitude(), longitude: otherPoint.getLongitude()},
+            1
+        );
     }
 
     return {getName, getLatitude, getLongitude, getCreatedAt,
