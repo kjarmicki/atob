@@ -4,7 +4,7 @@ const HtmlWebackPlugin = require('html-webpack-plugin');
 
 module.exports = {
     context: __dirname,
-    entry: './src/index',
+    entry: './src/app',
     output: {
         path: __dirname + '/dist',
         filename: 'bundle.js'
