@@ -27,7 +27,7 @@ tape('browser geolocation provider should correctly report unavailability', t =>
     t.end();
 });
 
-tape('browser geolocation provider should be able to poll current location', t => {
+tape('browser geolocation provider should be able to provide location', t => {
     // given
     const window = {
         navigator: { geolocation: { getCurrentPosition(success, error) {
@@ -39,12 +39,11 @@ tape('browser geolocation provider should be able to poll current location', t =
 
     // when
     const bgp = browserGeolocationProvider(window);
-    bgp.startPolling();
+    bgp.getCoordinates()
 
     // then
-    setTimeout(() => {
-        t.deepEqual({ latitude: 1, longitude: 2 }, bgp.getCoordinates());
-        bgp.stopPolling();
-        t.end();
-    }, 250);
+        .then(coordinates => {
+            t.deepEqual(coordinates, { latitude: 1, longitude: 2 });
+            t.end();
+        });
 });
