@@ -6,7 +6,7 @@
   "scripts": {
     "test": "tape -r babel-register 'test/**/*-test.js'",
     "build": "webpack",
-    "dev": "google-chrome dist/index.html && webpack --watch"
+    "dev": "google-chrome http://localhost:8080 && webpack-dev-server"
   },
   "author": "Krystian Jarmicki",
   "license": "ISC",
@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "babel-register": "6.9.0",
-    "tape": "4.5.1"
+    "tape": "4.5.1",
+    "webpack-dev-server": "1.14.1"
   }
 }
