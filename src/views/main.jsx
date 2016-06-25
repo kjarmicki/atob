@@ -1,7 +1,8 @@
 'use strict';
 
 import React from 'react';
-import PointsPage from './points/points-page'
+import PointsPage from './points/points-page';
+import NavigationPage from './navigation/navigation-page';
 
 export default class Main extends React.Component {
     render() {
@@ -13,7 +14,8 @@ export default class Main extends React.Component {
                     geolocationProvider={this.props.geolocationProvider}
                     events={this.props.events}
                 />
+                <NavigationPage />
             </div>
-        )
+        );
     }
 }
