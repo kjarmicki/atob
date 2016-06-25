@@ -50,5 +50,12 @@ export default function storagePointRepository(storage) {
         }
     }
 
-    return {store, remove, retrieveAll};
+    function retrieveChosen() {
+        return retrieveAll()
+            .then(points => {
+                return points.find(point => point.isChosenForNavigation());
+            });
+    }
+
+    return {store, remove, retrieveAll, retrieveChosen};
 }

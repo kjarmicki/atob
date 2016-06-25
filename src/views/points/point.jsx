@@ -4,21 +4,18 @@ import React from 'react';
 
 export default class Point extends React.Component {
     remove() {
-        this.props.pointRepository.remove(this.props.model)
-            .then(() => {
-                this.props.events.emit('point.remove');
-            })
-            .catch(err => {
-                console.error(err);
-            });
+        this.props.events.emit('point.remove', this.props.model);
     }
     choose() {
         this.props.events.emit('point.choose', this.props.model);
     }
+    disregard() {
+        this.props.events.emit('point.disregard', this.props.model);
+    }
     render() {
         const p = this.props.model.serialize();
         const navigation = p.chosenForNavigation ?
-            <strong>currently navigating</strong> :
+            <button onClick={this.disregard.bind(this)}>stop navigating</button> :
             <button onClick={this.choose.bind(this)}>navigate</button>;
 
         return (

@@ -12,16 +12,25 @@ export default class PointsPage extends React.Component {
         };
 
         this.props.events.on('point.add', () => this.updatePoints());
-        this.props.events.on('point.remove', () => this.updatePoints());
+        this.props.events.on('point.remove', point => this.removePoint(point));
         this.props.events.on('point.choose', point => this.choosePoint(point));
+        this.props.events.on('point.disregard', point => this.disregardPoint(point));
     }
+
     componentDidMount() {
         this.updatePoints();
     }
+
     updatePoints() {
         this.props.pointRepository.retrieveAll()
             .then(points => this.setState({points}));
     }
+
+    removePoint(point) {
+        this.props.pointRepository.remove(point)
+            .then(() => this.updatePoints());
+    }
+
     choosePoint(point) {
         const currentlyChosen = this.state.points.find(point => point.isChosenForNavigation());
         const operations = [];
@@ -36,13 +45,19 @@ export default class PointsPage extends React.Component {
             .then(() => this.updatePoints())
             .catch(err => console.error(err));
     }
+
+    disregardPoint(point) {
+        const newlyDisregarded = point.disregardForNavigation();
+        this.props.pointRepository.store(newlyDisregarded)
+            .then(() => this.updatePoints());
+    }
+
     render() {
         const points = this.state.points.map(point => {
             return (
                 <Point
                     key={point.uniqueKey()}
                     model={point}
-                    pointRepository={this.props.pointRepository}
                     events={this.props.events}
                 />
             )

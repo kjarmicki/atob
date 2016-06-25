@@ -3,9 +3,8 @@
 import React from 'react';
 import NavigationBox from './navigation-box';
 import pointModel from '../../model/point';
-import {promise} from '../../wrapper/polling';
 
-const POLL_INTERVAL = 150;
+const POLL_INTERVAL = 500;
 export default class NavigationPage extends React.Component {
     constructor(props) {
         super(props);
@@ -13,32 +12,62 @@ export default class NavigationPage extends React.Component {
             navigatingToPoint: null,
             currentPositionPoint: null
         };
+        this.shouldBeUpdating = false;
 
-        const polledGeolocation = promise(this.props.geolocationProvider.getCoordinates);
-        this.props.events.on('point.choose', point => {
-            polledGeolocation.start(POLL_INTERVAL / 2);
-            this.setState({
-                navigatingToPoint: point
+        this.props.pointRepository.retrieveChosen()
+            .then(chosenPoint => {
+                if(chosenPoint) {
+                    this.startNavigatingTo(chosenPoint);
+                }
             });
-            this.updateCycle(polledGeolocation);
+
+        this.props.events.on('point.choose', chosenPoint => this.startNavigatingTo(chosenPoint));
+        this.props.events.on('point.disregard', () => this.stopNavigating());
+        this.props.events.on('point.remove', point => {
+            if(point.isChosenForNavigation()) this.stopNavigating();
         });
     }
-    updateCycle(polledGeolocation) {
-        setTimeout(() => {
-            const currentGeo = polledGeolocation.getResult();
-            if(currentGeo !== null) {
+
+    startNavigatingTo(destinationPoint) {
+        if(!this.shouldBeUpdating) {
+            this.shouldBeUpdating = true;
+            this.props.polledGeolocation.start(POLL_INTERVAL);
+            this.updateCycle(currentPont => {
                 this.setState({
-                    currentPositionPoint: pointModel(Object.assign(currentGeo, {
+                    currentPositionPoint: currentPont
+                })
+            });
+        }
+        this.setState({
+            navigatingToPoint: destinationPoint
+        });
+    }
+
+    stopNavigating() {
+        this.shouldBeUpdating = false;
+        this.props.polledGeolocation.stop();
+        this.setState({
+            navigatingToPoint: null,
+            currentPositionPoint: null
+        });
+    }
+
+    updateCycle(whenAvailable) {
+        setTimeout(() => {
+            if(this.shouldBeUpdating) {
+                const currentGeo = this.props.polledGeolocation.getResult();
+                if (currentGeo !== null) {
+                    whenAvailable(pointModel(Object.assign(currentGeo, {
                         name: 'current'
-                    }))
-                });
+                    })));
+                }
+                this.updateCycle(whenAvailable);
             }
-            this.updateCycle(polledGeolocation);
-        }, POLL_INTERVAL);
+        }, POLL_INTERVAL * 2);
     }
     render() {
         const distance = (this.state.navigatingToPoint && this.state.currentPositionPoint) ?
-            <span>{this.state.currentPositionPoint.distanceFrom(this.state.navigatingToPoint)}</span> :
+            <span>distance: {this.state.currentPositionPoint.distanceFrom(this.state.navigatingToPoint)} meters</span> :
             <span>not navigating currently</span>
 
         return(

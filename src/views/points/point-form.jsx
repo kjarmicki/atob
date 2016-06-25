@@ -10,11 +10,13 @@ export default class PointForm extends React.Component {
             name: ''
         };
     }
+
     updateName(e) {
         this.setState({
             name: e.target.value
         });
     }
+
     submitPoint(e) {
         e.preventDefault();
         const name = this.state.name.trim();
@@ -31,12 +33,14 @@ export default class PointForm extends React.Component {
                 console.error(err);
             });
     }
+
     storePoint(name, coordinates) {
         const point = pointModel(Object.assign({}, coordinates, {
             name: name
         }));
         return this.props.pointRepository.store(point);
     }
+
     render() {
         return(
             <form className="point-form" onSubmit={this.submitPoint.bind(this)}>
