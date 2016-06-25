@@ -11,6 +11,7 @@ export default class Main extends React.Component {
                 <PointsPage
                     pointRepository={this.props.pointRepository}
                     geolocationProvider={this.props.geolocationProvider}
+                    events={this.props.events}
                 />
             </div>
         )

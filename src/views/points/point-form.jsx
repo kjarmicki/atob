@@ -20,11 +20,12 @@ export default class PointForm extends React.Component {
         const name = this.state.name.trim();
 
         this.props.geolocationProvider.getCoordinates()
-            .then(coordinates => {
-                this.storePoint(name, coordinates);
+            .then(coordinates => this.storePoint(name, coordinates))
+            .then(() => {
                 this.setState({
                     name: ''
                 });
+                this.props.events.emit('point.add');
             })
             .catch(err => {
                 console.error(err);
@@ -35,7 +36,7 @@ export default class PointForm extends React.Component {
             name: name,
             createdAt: Date.now()
         }));
-        this.props.pointRepository.store(point);
+        return this.props.pointRepository.store(point);
     }
     render() {
         return(

@@ -9,9 +9,14 @@ export default class PointsPage extends React.Component {
         super(props);
         this.state = {
             points: []
-        }
+        };
+
+        this.props.events.on('point.add', () => this.updatePoints());
     }
     componentDidMount() {
+        this.updatePoints();
+    }
+    updatePoints() {
         this.props.pointRepository.retrieveAll()
             .then(points => this.setState({points}));
     }
@@ -28,6 +33,7 @@ export default class PointsPage extends React.Component {
                 <PointForm
                     pointRepository={this.props.pointRepository}
                     geolocationProvider={this.props.geolocationProvider}
+                    events={this.props.events}
                 />
             </div>
         )
