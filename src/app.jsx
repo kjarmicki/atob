@@ -4,20 +4,16 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Main from './views/main';
 
-import storagePointRepository from './repository/storage-point-repository'
-import point from './model/point'
+import storagePointRepository from './repository/storage-point-repository';
+import browserGeolocationProvider from './infrastructure/geolocation/browser-geolocation-provider';
 
 const pointRepository = storagePointRepository(localStorage);
-if(localStorage.length === 0) {
-    pointRepository.store(point({
-        name: 'aaa',
-        latitude: 1,
-        longitude: 2,
-        createdAt: 3
-    }));
-}
+const geolocationProvider = browserGeolocationProvider(window);
 
 ReactDOM.render(
-    <Main pointRepository={pointRepository} />,
+    <Main
+        pointRepository={pointRepository}
+        geolocationProvider={geolocationProvider}
+    />,
     document.querySelector('#main')
 );
