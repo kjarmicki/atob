@@ -33,3 +33,31 @@ tape('point repository should be able to store a point', t => {
             t.end();
         });
 });
+
+tape('point repository should be able to remove a point', t => {
+    setup();
+
+    // given
+    const pointRepository = storagePointRepository(storage);
+    const point = pointModel({
+        name: 'test item',
+        latitude: 1,
+        longitude: 2,
+        createdAt: 3
+    });
+    pointRepository.store(point)
+
+    // when
+        .then(() => {
+            return pointRepository.remove(point);
+        })
+        .then(() => {
+            return pointRepository.retrieveAll();
+        })
+
+    // then
+        .then(points => {
+            t.true(points.length === 0, 'there are no stored points');
+            t.end();
+        });
+});

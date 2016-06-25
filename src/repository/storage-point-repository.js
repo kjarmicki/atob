@@ -10,15 +10,28 @@ export default function storagePointRepository(storage) {
     const namespace = `point-storage`;
 
     function store(point) {
-        const key = `${namespace}-${point.getLatitude()}|${point.getLongitude()}`;
+        const key = uniqueKey(point);
         const value = JSON.stringify(point.serialize());
-
         try {
             storage.setItem(key, value);
             return Promise.resolve();
         } catch(e) {
             return Promise.reject(e);
         }
+    }
+
+    function remove(point) {
+        const key = uniqueKey(point);
+        try {
+            storage.removeItem(key);
+            return Promise.resolve();
+        } catch(e) {
+            return Promise.reject(e);
+        }
+    }
+
+    function uniqueKey(point) {
+        return `${namespace}-${point.getLatitude()}|${point.getLongitude()}`;
     }
 
     function retrieveAll() {
@@ -37,5 +50,5 @@ export default function storagePointRepository(storage) {
         }
     }
 
-    return {store, retrieveAll};
+    return {store, remove, retrieveAll};
 }

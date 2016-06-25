@@ -12,6 +12,7 @@ export default class PointsPage extends React.Component {
         };
 
         this.props.events.on('point.add', () => this.updatePoints());
+        this.props.events.on('point.remove', () => this.updatePoints());
     }
     componentDidMount() {
         this.updatePoints();
@@ -23,13 +24,20 @@ export default class PointsPage extends React.Component {
     render() {
         const points = this.state.points.map(point => {
             return (
-                <Point key={point.getCreatedAt()} model={point} />
+                <Point
+                    key={point.getCreatedAt()}
+                    model={point}
+                    pointRepository={this.props.pointRepository}
+                    events={this.props.events}
+                />
             )
         });
         return(
             <div class="points-page">
                 <h2>stored points</h2>
-                {points}
+                <ul>
+                    {points}
+                </ul>
                 <PointForm
                     pointRepository={this.props.pointRepository}
                     geolocationProvider={this.props.geolocationProvider}

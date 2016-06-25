@@ -11,5 +11,9 @@ export default function makeStorage() {
         return db[key];
     }
 
-    return Object.assign(db, {setItem, getItem});
+    function removeItem(key) {
+        delete db[key];
+    }
+
+    return Object.assign(db, {setItem, getItem, removeItem});
 }
