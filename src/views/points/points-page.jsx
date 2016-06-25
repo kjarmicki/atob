@@ -13,6 +13,7 @@ export default class PointsPage extends React.Component {
 
         this.props.events.on('point.add', () => this.updatePoints());
         this.props.events.on('point.remove', () => this.updatePoints());
+        this.props.events.on('point.choose', point => this.choosePoint(point));
     }
     componentDidMount() {
         this.updatePoints();
@@ -21,11 +22,25 @@ export default class PointsPage extends React.Component {
         this.props.pointRepository.retrieveAll()
             .then(points => this.setState({points}));
     }
+    choosePoint(point) {
+        const currentlyChosen = this.state.points.find(point => point.isChosenForNavigation());
+        const operations = [];
+        if(currentlyChosen) {
+            const previous = currentlyChosen.disregardForNavigation();
+            operations.push(this.props.pointRepository.store(previous));
+        }
+        const newlyChosen = point.chooseForNavigation();
+        operations.push(this.props.pointRepository.store(newlyChosen));
+
+        Promise.all(operations)
+            .then(() => this.updatePoints())
+            .catch(err => console.error(err));
+    }
     render() {
         const points = this.state.points.map(point => {
             return (
                 <Point
-                    key={point.getCreatedAt()}
+                    key={point.uniqueKey()}
                     model={point}
                     pointRepository={this.props.pointRepository}
                     events={this.props.events}

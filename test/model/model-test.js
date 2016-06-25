@@ -25,3 +25,26 @@ tape('point model should correctly calculate distance between two points', t => 
     t.equal(distance, 150);
     t.end();
 });
+
+tape('point model should clone itself when chosen for navigation', t => {
+    // given
+    const point = pointModel({
+        name: 'a',
+        latitude: 49.596582,
+        longitude: 20.075843,
+        createdAt: 0
+    });
+
+    // when
+    const chosenPoint = point.chooseForNavigation();
+
+    // then
+    t.false(point === chosenPoint, 'points refer to different instances');
+    t.equal(point.getName(), chosenPoint.getName());
+    t.equal(point.getLatitude(), chosenPoint.getLatitude());
+    t.equal(point.getLongitude(), chosenPoint.getLongitude());
+    t.equal(point.getCreatedAt(), chosenPoint.getCreatedAt());
+    t.false(point.isChosenForNavigation());
+    t.true(chosenPoint.isChosenForNavigation());
+    t.end();
+});

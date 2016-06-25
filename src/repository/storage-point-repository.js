@@ -31,7 +31,7 @@ export default function storagePointRepository(storage) {
     }
 
     function uniqueKey(point) {
-        return `${namespace}-${point.getLatitude()}|${point.getLongitude()}`;
+        return `${namespace}-${point.uniqueKey()}`;
     }
 
     function retrieveAll() {

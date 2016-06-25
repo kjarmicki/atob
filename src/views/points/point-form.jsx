@@ -33,8 +33,7 @@ export default class PointForm extends React.Component {
     }
     storePoint(name, coordinates) {
         const point = pointModel(Object.assign({}, coordinates, {
-            name: name,
-            createdAt: Date.now()
+            name: name
         }));
         return this.props.pointRepository.store(point);
     }

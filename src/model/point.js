@@ -6,7 +6,11 @@ import geolib from 'geolib';
  * Object factory of models representing point on a map
  */
 
-export default function point({name, latitude, longitude, createdAt}) {
+export default function point({name, latitude, longitude, createdAt = Date.now(), chosenForNavigation = false}) {
+    const instance = {getName, getLatitude, getLongitude, getCreatedAt,
+        equals, uniqueKey, serialize, distanceFrom,
+        isChosenForNavigation, chooseForNavigation, disregardForNavigation};
+
     function getName() {
         return name;
     }
@@ -23,15 +27,38 @@ export default function point({name, latitude, longitude, createdAt}) {
         return createdAt;
     }
 
+    function isChosenForNavigation() {
+        return !!chosenForNavigation;
+    }
+
+    function chooseForNavigation() {
+        if(isChosenForNavigation()) return instance;
+        const serialized = serialize();
+        serialized.chosenForNavigation = true;
+        return point(serialized);
+    }
+
+    function disregardForNavigation() {
+        if(!isChosenForNavigation()) return instance;
+        const serialized = serialize();
+        serialized.chosenForNavigation = false;
+        return point(serialized);
+    }
+
     function equals(otherPoint) {
-        return name === otherPoint.getName() &&
-            latitude === otherPoint.getLatitude() &&
-            longitude === otherPoint.getLongitude() &&
-            createdAt === otherPoint.getCreatedAt();
+        return getName() === otherPoint.getName() &&
+            getLatitude() === otherPoint.getLatitude() &&
+            getLongitude() === otherPoint.getLongitude() &&
+            getCreatedAt() === otherPoint.getCreatedAt() &&
+            isChosenForNavigation() == otherPoint.isChosenForNavigation();
+    }
+
+    function uniqueKey() {
+        return `${getLatitude()}|${getLatitude()}|${getCreatedAt()}`;
     }
 
     function serialize() {
-        return {name, latitude, longitude, createdAt};
+        return {name, latitude, longitude, createdAt, chosenForNavigation};
     }
 
     function distanceFrom(otherPoint) {
@@ -42,6 +69,5 @@ export default function point({name, latitude, longitude, createdAt}) {
         );
     }
 
-    return {getName, getLatitude, getLongitude, getCreatedAt,
-        equals, serialize, distanceFrom};
+    return instance;
 }

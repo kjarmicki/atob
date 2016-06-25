@@ -18,8 +18,7 @@ tape('point repository should be able to store a point', t => {
     const point = pointModel({
         name: 'test item',
         latitude: 1,
-        longitude: 2,
-        createdAt: 3
+        longitude: 2
     });
 
     // when
@@ -42,8 +41,7 @@ tape('point repository should be able to remove a point', t => {
     const point = pointModel({
         name: 'test item',
         latitude: 1,
-        longitude: 2,
-        createdAt: 3
+        longitude: 2
     });
     pointRepository.store(point)
 
