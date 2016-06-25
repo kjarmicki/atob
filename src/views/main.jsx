@@ -14,7 +14,10 @@ export default class Main extends React.Component {
                     geolocationProvider={this.props.geolocationProvider}
                     events={this.props.events}
                 />
-                <NavigationPage />
+                <NavigationPage
+                    geolocationProvider={this.props.geolocationProvider}
+                    events={this.props.events}
+                />
             </div>
         );
     }

@@ -1,7 +1,7 @@
 'use strict';
 
 import tape from 'tape';
-import polling from '../../src/wrapper/polling';
+import {promise} from '../../src/wrapper/polling';
 
 tape('polled promise function should return correct results', t => {
     // given
@@ -15,7 +15,7 @@ tape('polled promise function should return correct results', t => {
     }
 
     // when
-    const polled = polling.promise(toBePolled);
+    const polled = promise(toBePolled);
     polled.start(100);
 
     // then
@@ -32,5 +32,4 @@ tape('polled promise function should return correct results', t => {
         polled.stop();
         t.end();
     }, 450);
-
 });

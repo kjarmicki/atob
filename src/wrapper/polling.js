@@ -1,9 +1,6 @@
 'use strict';
 
-const polling = {};
-export default polling;
-
-polling.promise = function(underlyingFunc) {
+export function promise(underlyingFunc) {
     let running = false;
     let cachedResult = null;
 
@@ -37,4 +34,4 @@ polling.promise = function(underlyingFunc) {
     }
 
     return {start, stop, getResult};
-};
+}
