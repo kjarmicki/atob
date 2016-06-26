@@ -104,3 +104,56 @@ body {
 .page-selected-points .points-page {
     display: block;
 }
+
+.points-list {
+    margin: 15px 0 0;
+    padding: 0;
+}
+
+.point {
+    display: block;
+    font-size: 0.9em;
+    background: #E9F0F2;
+    height: 45px;
+    line-height: 45px;
+    position: relative;;
+    border-bottom: 1px solid #ccc;
+}
+
+.point:last-child {
+    margin-bottom: 0;
+}
+
+.chosen-for-navigation {
+    background-color: #F3FFE2;
+}
+
+.point h3 {
+    margin: 0 0 0 10px;
+    font-weight: normal;
+    font-size: 1em;
+}
+
+.point-controls {
+    margin: 0;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.point-controls button {
+    background: transparent;
+    border: none;
+    margin: 0 10px 0 0;
+    padding: 0 5px;
+    font-size: 0.85em;
+}
+
+.control-remove {
+    color: #B22400;
+}
+
+.point-controls button:focus, .point-controls button:active {
+    outline: 0;
+    background: transparent;
+}

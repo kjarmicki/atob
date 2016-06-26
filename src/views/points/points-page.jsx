@@ -64,8 +64,7 @@ export default class PointsPage extends React.Component {
         });
         return(
             <div className="points-page">
-                <h2>stored points</h2>
-                <ul>
+                <ul className="points-list">
                     {points}
                 </ul>
                 <PointForm

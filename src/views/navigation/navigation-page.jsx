@@ -10,9 +10,10 @@ export default class NavigationPage extends React.Component {
         super(props);
         this.state = {
             navigatingToPoint: null,
-            currentPositionPoint: null
+            currentPositionPoint: null,
+            polledGeolocation: this.props.polledGeolocation,
+            shouldBeUpdating: false
         };
-        this.shouldBeUpdating = false;
 
         this.props.pointRepository.retrieveChosen()
             .then(chosenPoint => {
@@ -29,9 +30,9 @@ export default class NavigationPage extends React.Component {
     }
 
     startNavigatingTo(destinationPoint) {
-        if(!this.shouldBeUpdating) {
-            this.shouldBeUpdating = true;
-            this.props.polledGeolocation.start(POLL_INTERVAL);
+        if(!this.state.shouldBeUpdating) {
+            this.setState({shouldBeUpdating: true});
+            this.state.polledGeolocation.start(POLL_INTERVAL);
             this.updateCycle(currentPont => {
                 this.setState({
                     currentPositionPoint: currentPont
@@ -44,18 +45,19 @@ export default class NavigationPage extends React.Component {
     }
 
     stopNavigating() {
-        this.shouldBeUpdating = false;
-        this.props.polledGeolocation.stop();
+        this.state.polledGeolocation.stop();
         this.setState({
             navigatingToPoint: null,
-            currentPositionPoint: null
+            currentPositionPoint: null,
+            shouldBeUpdating: false
         });
     }
 
     updateCycle(whenAvailable) {
+        var polled = this.state.polledGeolocation;
         setTimeout(() => {
-            if(this.shouldBeUpdating) {
-                const currentGeo = this.props.polledGeolocation.getResult();
+            if(this.state.shouldBeUpdating) {
+                const currentGeo = this.state.polledGeolocation.getResult();
                 if (currentGeo !== null) {
                     whenAvailable(pointModel(Object.assign(currentGeo, {
                         name: 'current'
