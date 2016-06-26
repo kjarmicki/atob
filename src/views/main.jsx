@@ -3,7 +3,6 @@
 import React from 'react';
 import PointsPage from './points/points-page';
 import NavigationPage from './navigation/navigation-page';
-import {promise} from '../wrapper/polling';
 
 export default class Main extends React.Component {
     constructor(props) {
@@ -28,7 +27,6 @@ export default class Main extends React.Component {
         });
     }
     render() {
-        const polledGeolocation = promise(this.props.geolocationProvider.getCoordinates);
         const pagesClassNames = ['pages',
             `page-selected-${this.state.selected}`
         ].join(' ');
@@ -60,7 +58,7 @@ export default class Main extends React.Component {
                     />
                     <NavigationPage
                         pointRepository={this.props.pointRepository}
-                        polledGeolocation={polledGeolocation}
+                        geolocationProvider={this.props.geolocationProvider}
                         events={this.props.events}
                     />
                 </div>

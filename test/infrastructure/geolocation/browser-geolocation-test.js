@@ -47,3 +47,45 @@ tape('browser geolocation provider should be able to provide location', t => {
             t.end();
         });
 });
+
+tape('polled promise function should return correct results', t => {
+    // given
+    let latitude, longitude;
+    latitude = longitude = 0;
+
+    const window = {
+        navigator: { geolocation: {
+            _id: null,
+            watchPosition(success, error) {
+                this._id = setTimeout(() => { success({
+                    coords: { latitude: latitude++, longitude: longitude++ }
+                }); this.watchPosition(success, error) }, 40);
+            },
+            clearWatch() {
+                clearTimeout(this._id);
+            }
+        } }
+    };
+
+    // when
+    let result = null;
+    const bgp = browserGeolocationProvider(window);
+    bgp.watchCoordinates(coordinates => {
+        result = coordinates;
+    });
+
+    // then
+    setTimeout(() => {
+        t.equal(result, null, 'result not obtained yet');
+    }, 20);
+
+    setTimeout(() => {
+        t.deepEqual(result, {latitude: 0, longitude: 0}, 'result obtained for the first time');
+    }, 60);
+
+    setTimeout(() => {
+        t.deepEqual(result, {latitude: 1, longitude: 1}, 'result obtained for the second time');
+        bgp.stopWatchingCoordinates();
+        t.end();
+    }, 100);
+});

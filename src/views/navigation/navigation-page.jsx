@@ -4,14 +4,15 @@ import React from 'react';
 import NavigationBox from './navigation-box';
 import pointModel from '../../model/point';
 
-const POLL_INTERVAL = 500;
 export default class NavigationPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             navigatingToPoint: null,
             currentPositionPoint: null,
-            polledGeolocation: this.props.polledGeolocation,
+            // stateful component
+            watchCoordinates: this.props.geolocationProvider.watchCoordinates,
+            stopWatchingCoordinates: this.props.geolocationProvider.stopWatchingCoordinates,
             shouldBeUpdating: false
         };
 
@@ -32,11 +33,13 @@ export default class NavigationPage extends React.Component {
     startNavigatingTo(destinationPoint) {
         if(!this.state.shouldBeUpdating) {
             this.setState({shouldBeUpdating: true});
-            this.state.polledGeolocation.start(POLL_INTERVAL);
-            this.updateCycle(currentPont => {
+            this.state.watchCoordinates(currentCoordinates => {
+                const currentPoint = pointModel(Object.assign(currentCoordinates, {
+                    name: 'current'
+                }));
                 this.setState({
-                    currentPositionPoint: currentPont
-                })
+                    currentPositionPoint: currentPoint
+                });
             });
         }
         this.setState({
@@ -45,7 +48,7 @@ export default class NavigationPage extends React.Component {
     }
 
     stopNavigating() {
-        this.state.polledGeolocation.stop();
+        this.state.stopWatchingCoordinates();
         this.setState({
             navigatingToPoint: null,
             currentPositionPoint: null,
@@ -53,20 +56,6 @@ export default class NavigationPage extends React.Component {
         });
     }
 
-    updateCycle(whenAvailable) {
-        var polled = this.state.polledGeolocation;
-        setTimeout(() => {
-            if(this.state.shouldBeUpdating) {
-                const currentGeo = this.state.polledGeolocation.getResult();
-                if (currentGeo !== null) {
-                    whenAvailable(pointModel(Object.assign(currentGeo, {
-                        name: 'current'
-                    })));
-                }
-                this.updateCycle(whenAvailable);
-            }
-        }, POLL_INTERVAL * 2);
-    }
     render() {
         const distance = (this.state.navigatingToPoint && this.state.currentPositionPoint) ?
             <span>distance: {this.state.currentPositionPoint.distanceFrom(this.state.navigatingToPoint)} meters</span> :
