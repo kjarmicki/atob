@@ -71,7 +71,7 @@ export default class NavigationPage extends React.Component {
             <span>not navigating currently</span>
 
         return(
-            <div class="navigation-page">
+            <div className="navigation-page">
                 <NavigationBox />
                 {distance}
             </div>

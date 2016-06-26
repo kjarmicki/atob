@@ -63,7 +63,7 @@ export default class PointsPage extends React.Component {
             )
         });
         return(
-            <div class="points-page">
+            <div className="points-page">
                 <h2>stored points</h2>
                 <ul>
                     {points}

@@ -6,21 +6,64 @@ import NavigationPage from './navigation/navigation-page';
 import {promise} from '../wrapper/polling';
 
 export default class Main extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            menuItems: ['points', 'navigation'],
+            selected: 'points',
+            transitionProgress: 'ended'
+        };
+    }
+    select(e) {
+        e.preventDefault();
+        const id = e.target.dataset.id;
+        this.setState({
+            selected: id,
+            transitionProgress: 'running'
+        });
+    }
+    pageTransitionEnd(e) {
+        this.setState({
+            transitionProgress: 'ended'
+        });
+    }
     render() {
         const polledGeolocation = promise(this.props.geolocationProvider.getCoordinates);
+        const pagesClassNames = ['pages',
+            `page-selected-${this.state.selected}`
+        ].join(' ');
+        const mainViewClassNames = ['main-view',
+            `page-transition-progress-${this.state.transitionProgress}`
+        ].join(' ');
+        const menuItems = this.state.menuItems.map(item => {
+            return(
+                <li key={item} className="main-menu-item">
+                    <a onClick={this.select.bind(this)}
+                       className={this.state.selected === item ? "active" : "" } data-id={item} href="#">{item}</a>
+                </li>
+            );
+        });
         return (
-            <div className="main-view">
-                <h1>A to B</h1>
-                <PointsPage
-                    pointRepository={this.props.pointRepository}
-                    geolocationProvider={this.props.geolocationProvider}
-                    events={this.props.events}
-                />
-                <NavigationPage
-                    pointRepository={this.props.pointRepository}
-                    polledGeolocation={polledGeolocation}
-                    events={this.props.events}
-                />
+            <div className={mainViewClassNames}>
+                <header className="main-header">
+                    <nav>
+                        <ul className="main-menu-list">
+                            {menuItems}
+                        </ul>
+                    </nav>
+                </header>
+                <div onTransitionEnd={this.pageTransitionEnd.bind(this)} className={pagesClassNames}>
+                    <PointsPage
+                        pointRepository={this.props.pointRepository}
+                        geolocationProvider={this.props.geolocationProvider}
+                        events={this.props.events}
+                    />
+                    <NavigationPage
+                        pointRepository={this.props.pointRepository}
+                        polledGeolocation={polledGeolocation}
+                        events={this.props.events}
+                    />
+                </div>
             </div>
         );
     }

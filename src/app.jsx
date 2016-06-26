@@ -8,6 +8,8 @@ import Main from './views/main';
 import storagePointRepository from './repository/storage-point-repository';
 import browserGeolocationProvider from './infrastructure/geolocation/browser-geolocation-provider';
 
+import './assets/assets';
+
 const pointRepository = storagePointRepository(localStorage);
 const geolocationProvider = browserGeolocationProvider(window);
 const events = new EventEmitter();

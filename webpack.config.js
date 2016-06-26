@@ -17,10 +17,13 @@ module.exports = {
                 cacheDirectory: true
             },
             exclude: /node_modules/
+        }, {
+            test: /\.css$/,
+            loaders: ['style-loader', 'css-loader']
         }]
     },
     resolve: {
-        extensions: ['', '.js', '.jsx']
+        extensions: ['', '.js', '.jsx', '.css']
     },
     plugins: [new HtmlWebackPlugin({
         template: './src/views/index.html'
