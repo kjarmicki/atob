@@ -6,7 +6,7 @@
   "scripts": {
     "test": "tape -r babel-register 'test/**/*-test.js'",
     "build": "webpack",
-    "dev": "google-chrome http://localhost:8080 && webpack-dev-server"
+    "dev": "google-chrome https://localhost:8080 && webpack-dev-server --host 0.0.0.0 --https"
   },
   "author": "Krystian Jarmicki",
   "license": "ISC",
