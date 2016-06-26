@@ -8,7 +8,9 @@ export default function browserGeolocationProvider(window) {
                     const {latitude, longitude} = position.coords;
                     resolve({latitude, longitude});
                 },
-                reject
+                reject, {
+                    enableHighAccuracy: true
+                }
             );
         });
     }
