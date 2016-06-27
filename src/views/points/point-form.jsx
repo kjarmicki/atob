@@ -7,13 +7,21 @@ export default class PointForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            name: ''
+            name: '',
+            formVisible: false
         };
     }
 
     updateName(e) {
         this.setState({
             name: e.target.value
+        });
+    }
+
+    toggleFormVisibility(e) {
+        e && e.preventDefault();
+        this.setState({
+            formVisible: !this.state.formVisible
         });
     }
 
@@ -28,6 +36,7 @@ export default class PointForm extends React.Component {
                     name: ''
                 });
                 this.props.events.emit('point.add');
+                this.toggleFormVisibility();
             })
             .catch(err => {
                 console.error(err);
@@ -42,14 +51,20 @@ export default class PointForm extends React.Component {
     }
 
     render() {
+        const pointFormWrapperClassNames = ['point-form-wrapper',
+            this.state.formVisible ? 'point-form-visible' : ''
+        ].join(' ');
         return(
-            <form className="point-form" onSubmit={this.submitPoint.bind(this)}>
-                <h2>Add a point</h2>
-                <label for="name">Name for a current point
-                    <input type="text" id="name" onChange={this.updateName.bind(this)} value={this.state.name} name="name" placeholder="name" />
-                </label>
-                <input type="submit" value="save" />
-            </form>
+            <div className={pointFormWrapperClassNames}>
+                <button className="btn point-form-trigger" onClick={this.toggleFormVisibility.bind(this)}>Add a new point at current location</button>
+                <div className="point-form-overlay">
+                    <form className="point-form" onSubmit={this.submitPoint.bind(this)}>
+                        <input type="text" onChange={this.updateName.bind(this)} value={this.state.name} name="name" className="new-point-name" placeholder="enter a point name" />
+                        <input className="btn" type="submit" value="save" />
+                        <button className="btn point-form-cancel" onClick={this.toggleFormVisibility.bind(this)}>cancel</button>
+                    </form>
+                </div>
+            </div>
         )
     }
 }
