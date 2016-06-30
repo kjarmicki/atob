@@ -228,3 +228,8 @@ input[type="text"] {
     margin-left: 6px;
     line-height: 25px;
 }
+
+.navigation-box-canvas {
+    display: block;
+    background: #e9f0f2;
+}

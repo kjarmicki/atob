@@ -3,6 +3,8 @@
 import React from 'react';
 import NavigationBox from './navigation-box';
 import pointModel from '../../model/point';
+import canvasRenderer from '../../rendering/canvas';
+import measurements from '../../measurements/measurements';
 
 export default class NavigationPage extends React.Component {
     constructor(props) {
@@ -59,11 +61,16 @@ export default class NavigationPage extends React.Component {
     render() {
         const distance = (this.state.navigatingToPoint && this.state.currentPositionPoint) ?
             <span>distance: {this.state.currentPositionPoint.distanceFrom(this.state.navigatingToPoint)} meters</span> :
-            <span>not navigating currently</span>
+            <span>not navigating currently</span>;
 
         return(
             <div className="navigation-page">
-                <NavigationBox />
+                <NavigationBox
+                    measurements={measurements}
+                    canvasRenderer={canvasRenderer}
+                    navigatingToPoint={this.state.navigatingToPoint}
+                    currentPositionPoint={this.state.currentPositionPoint}
+                />
                 {distance}
             </div>
         );
