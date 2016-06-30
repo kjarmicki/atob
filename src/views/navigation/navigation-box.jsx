@@ -37,6 +37,8 @@ export default class NavigationBox extends React.Component {
         const pointB = this.props.measurements.coordsToPx(
             this.props.navigatingToPoint.serialize(), {width, height});
 
+        console.log(this.props.measurements.scalePointsToArea([pointA, pointB], {width, height}));
+
         this.renderer.drawPath(pointA, pointB);
     }
     render() {
