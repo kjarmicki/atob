@@ -22,6 +22,9 @@ export default {
             minY = pickNumber(minY, point.y, Math.min);
         });
         let diffX = maxX - minX;
+        if(diffX === 0) {
+            diffX = sideWidth;
+        }
         let scale = sideWidth / diffX;
 
         return points.map(point => {
