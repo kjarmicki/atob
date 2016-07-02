@@ -12,7 +12,8 @@ export default {
 
         return {x, y};
     },
-    scalePointsToArea(points, area, padding) {
+
+    scalePointsToQuadraticArea(points, sideWidth, padding) {
         let maxX, maxY, minX, minY;
         points.forEach(point => {
             maxX = pickNumber(maxX, point.x, Math.max);
@@ -21,7 +22,12 @@ export default {
             minY = pickNumber(minY, point.y, Math.min);
         });
         let diffX = maxX - minX;
-        let diffY = maxY - minY;
-        console.log(diffX, diffY);
+        let scale = sideWidth / diffX;
+
+        return points.map(point => {
+            point.x = (point.x - minX) * scale;
+            point.y = (point.y - minY) * scale;
+            return point;
+        });
     }
 };

@@ -23,7 +23,7 @@ tape('measurements module should be able to convert latitude/langitude to pixels
     t.end();
 });
 
-tape('measurements module should be able to scale points to fit given area - in corner', t => {
+tape('measurements module should be able to scale points to fit given quadratic area - in corner', t => {
     // given
     const points = [
         {
@@ -33,13 +33,10 @@ tape('measurements module should be able to scale points to fit given area - in 
             x: 4, y: 4
         }
     ];
-    const area = {
-        width: 100,
-        height: 100
-    };
+    const sideWidth = 10;
 
     // when
-    const scaledPoints = measurements.scalePointsToArea(points, area);
+    const scaledPoints = measurements.scalePointsToQuadraticArea(points, sideWidth);
 
     // then
     t.deepEqual(scaledPoints, [
@@ -47,12 +44,13 @@ tape('measurements module should be able to scale points to fit given area - in 
             x: 0, y: 0
         },
         {
-            x: 100, y: 100
+            x: 10, y: 10
         }
-    ])
+    ]);
+    t.end();
 });
 
-tape('measurements module should be able to scale points to fit given area - in center', t => {
+tape('measurements module should be able to scale points to fit given quadratic area - in center', t => {
     // given
     const points = [
         {
@@ -62,13 +60,10 @@ tape('measurements module should be able to scale points to fit given area - in 
             x: 4, y: 4
         }
     ];
-    const area = {
-        width: 100,
-        height: 100
-    };
+    const sideWidth = 10;
 
     // when
-    const scaledPoints = measurements.scalePointsToArea(points, area);
+    const scaledPoints = measurements.scalePointsToQuadraticArea(points, sideWidth);
 
     // then
     t.deepEqual(scaledPoints, [
@@ -76,8 +71,35 @@ tape('measurements module should be able to scale points to fit given area - in 
             x: 0, y: 0
         },
         {
-            x: 100, y: 100
+            x: 10, y: 10
         }
     ]);
+    t.end();
 });
 
+tape('measurements module should be able to scale points to fit given quadratic area - offset', t => {
+    // given
+    const points = [
+        {
+            x: 2, y: 2
+        },
+        {
+            x: 3, y: 2
+        }
+    ];
+    const sideWidth = 10;
+
+    // when
+    const scaledPoints = measurements.scalePointsToQuadraticArea(points, sideWidth);
+
+    // then
+    t.deepEqual(scaledPoints, [
+        {
+            x: 0, y: 0
+        },
+        {
+            x: 10, y: 0
+        }
+    ]);
+    t.end();
+});
