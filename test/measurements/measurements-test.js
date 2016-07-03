@@ -130,3 +130,30 @@ tape('measurements module should be able to scale points to fit given quadratic 
     ]);
     t.end();
 });
+
+tape('measurements module should be able to scale points to fit given quadratic area - more difference in y than x', t => {
+    // given
+    const points = [
+        {
+            x: 2, y: 2
+        },
+        {
+            x: 2, y: 4
+        }
+    ];
+    const sideWidth = 10;
+
+    // when
+    const scaledPoints = measurements.scalePointsToQuadraticArea(points, sideWidth);
+
+    // then
+    t.deepEqual(scaledPoints, [
+        {
+            x: 0, y: 0
+        },
+        {
+            x: 0, y: 10
+        }
+    ]);
+    t.end();
+});
