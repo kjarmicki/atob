@@ -1,6 +1,6 @@
 'use strict';
 
-export default {coordsToPx, scalePointsToQuadraticArea};
+export default {coordsToPx, scalePointsToQuadraticArea, transformPointsMatrix};
 
 function coordsToPx(coords, area) {
     const x = (area.width/360) * (180 + coords.longitude);
@@ -34,6 +34,14 @@ function scalePointsToQuadraticArea(points, sideWidth) {
     return points.map(point => {
         point.x = (point.x - minX) * scale;
         point.y = (point.y - minY) * scale;
+        return point;
+    });
+}
+
+function transformPointsMatrix(points, transformX, transformY) {
+    return points.map(point => {
+        point.x = transformX(point.x);
+        point.y = transformY(point.y);
         return point;
     });
 }
