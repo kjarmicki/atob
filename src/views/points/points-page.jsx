@@ -1,6 +1,7 @@
 'use strict';
 
 import React from 'react';
+import Promise from 'bluebird';
 import Point from './point'
 import PointForm from './point-form'
 

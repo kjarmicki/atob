@@ -9,12 +9,10 @@
     "cordova:platform:android": "cd dist/cordova && cordova platform add android@4.0.2 --save",
     "cordova:move": "cp dist/browser/index.html dist/cordova/www/. && cp dist/browser/js/bundle.js dist/cordova/www/js/.",
     "cordova:build": "cd dist/cordova && cordova build",
-
     "clean": "rm -rf dist",
     "test": "tape -r babel-register 'test/**/*-test.js' | tap-spec",
     "build": "npm run clean && webpack",
     "dev": "google-chrome https://localhost:8080 && webpack-dev-server --host 0.0.0.0 --https",
-
     "cordova": "npm run build && npm run cordova:create && npm run cordova:platform:android && npm run cordova:move && npm run cordova:build"
   },
   "author": "Krystian Jarmicki",
@@ -24,6 +22,7 @@
     "babel-loader": "6.2.4",
     "babel-preset-es2015": "6.9.0",
     "babel-preset-react": "6.5.0",
+    "bluebird": "3.4.1",
     "css-loader": "0.23.1",
     "geolib": "2.0.21",
     "html-webpack-plugin": "2.21.0",
