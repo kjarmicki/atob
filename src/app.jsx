@@ -10,15 +10,17 @@ import browserGeolocationProvider from './infrastructure/geolocation/browser-geo
 
 import './assets/assets';
 
-const pointRepository = storagePointRepository(localStorage);
-const geolocationProvider = browserGeolocationProvider(window);
-const events = new EventEmitter();
+document.addEventListener('deviceready', () => {
+    const pointRepository = storagePointRepository(localStorage);
+    const geolocationProvider = browserGeolocationProvider(window);
+    const events = new EventEmitter();
 
-ReactDOM.render(
-    <Main
-        pointRepository={pointRepository}
-        geolocationProvider={geolocationProvider}
-        events={events}
-    />,
-    document.querySelector('#main')
-);
+    ReactDOM.render(
+        <Main
+            pointRepository={pointRepository}
+            geolocationProvider={geolocationProvider}
+            events={events}
+            />,
+        document.querySelector('#main')
+    );
+});

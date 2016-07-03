@@ -4,10 +4,13 @@ const HtmlWebackPlugin = require('html-webpack-plugin');
 
 module.exports = {
     context: __dirname,
-    entry: './src/app',
+    entry: {
+        'js/bundle': './src/app',
+        'cordova': './src/wrappers/cordova'
+    },
     output: {
-        path: __dirname + '/dist',
-        filename: 'bundle.js'
+        path: __dirname + '/dist/browser',
+        filename: '[name].js'
     },
     module: {
         loaders: [{
