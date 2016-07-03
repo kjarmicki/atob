@@ -32,14 +32,15 @@ export default class NavigationBox extends React.Component {
     }
     drawPathBetweenPoints() {
         const {width, height} = this.state;
-        const pointA = this.props.measurements.coordsToPx(
+        const currentPositionPointPx = this.props.measurements.coordsToPx(
             this.props.currentPositionPoint.serialize(), {width, height});
-        const pointB = this.props.measurements.coordsToPx(
+        const navigatingToPointPx = this.props.measurements.coordsToPx(
             this.props.navigatingToPoint.serialize(), {width, height});
 
-        console.log(this.props.measurements.scalePointsToArea([pointA, pointB], {width, height}));
+        const [currentPositionPointScaled, navigatingToPointScaled] =
+            this.props.measurements.scalePointsToQuadraticArea([currentPositionPointPx, navigatingToPointPx], width);
 
-        this.renderer.drawPath(pointA, pointB);
+        this.renderer.drawPath(currentPositionPointScaled, navigatingToPointScaled);
     }
     render() {
         const content = this.areBothPointsPresent() ?

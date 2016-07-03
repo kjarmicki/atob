@@ -6,11 +6,11 @@ export default function canvasRenderer(ctx, specs) {
         ctx.fillRect(0, 0, specs.width, specs.height);
     }
 
-    function drawPath(pointA, pointB) {
+    function drawPath(current, navigating) {
         ctx.strokeStyle = specs.lineColor;
         ctx.beginPath();
-        ctx.moveTo(pointA.x, pointA.y);
-        ctx.lineTo(pointB.x, pointB.y);
+        ctx.moveTo(current.x, current.y);
+        ctx.lineTo(navigating.x, navigating.y);
         ctx.stroke();
     }
 
