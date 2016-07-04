@@ -10,8 +10,10 @@ export default class NavigationBox extends React.Component {
             height: 320
         };
         this.specs = {
-            backgroundColor: '#F3FFE2',
-            lineColor: '#000000'
+            backgroundColor: '#f3ffe2',
+            lineColor: '#0fb5c7',
+            currentPositionColor: '#dbfdaa',
+            navigatingPositionColor: '#b22400'
         };
         this.ctx = null;
         this.renderer = null;
@@ -33,19 +35,28 @@ export default class NavigationBox extends React.Component {
     drawPathBetweenPoints() {
         const {width, height} = this.state;
         const halfWidth = width/2;
-        const currentPx = this.props.measurements.coordsToPx(
-            this.props.currentPositionPoint.serialize(), {width, height});
-        const navigatingPx = this.props.measurements.coordsToPx(
-            this.props.navigatingToPoint.serialize(), {width, height});
+        const measurements = this.props.measurements;
 
-        const [currentTransformed, navigatingTransformed] =
-            this.props.measurements.transformPointsMatrix([currentPx, navigatingPx],
-                x => halfWidth + x - currentPx.x,
-                y => y - currentPx.x
-            );
-
-        const [currentScaled, navigatingScaled] =
-            this.props.measurements.scalePointsToQuadraticArea([currentTransformed, navigatingTransformed], width);
+        const [[currentScaled, navigatingScaled]] =
+            [[this.props.currentPositionPoint, this.props.navigatingToPoint]]
+            // convert lat and lng to px
+            .map(points => {
+                return points.map(point => {
+                    return measurements.coordsToPx(point.serialize(), {width, height});
+                });
+            })
+            // scale px values to canvas width
+            .map(pointsPx => {
+                return measurements.scalePointsToQuadraticArea(pointsPx, width);
+            })
+            // transform the matrix so current position is at bottom center of canvas
+            .map(([currentPrescaled, navigatingPrescaled]) => {
+                const currentClone = Object.assign({}, currentPrescaled);
+                return measurements.transformPointsMatrix([currentPrescaled, navigatingPrescaled],
+                    x => halfWidth + x - currentClone.x,
+                    y => height + y - currentClone.y
+                );
+            });
 
         this.renderer.drawPath(currentScaled, navigatingScaled);
     }

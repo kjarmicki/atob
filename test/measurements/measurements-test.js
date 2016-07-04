@@ -157,3 +157,33 @@ tape('measurements module should be able to scale points to fit given quadratic 
     ]);
     t.end();
 });
+
+tape('measurements module should be able to transform points martix', t => {
+    // given
+    const points = [
+        {
+            x: 2, y: 2
+        },
+        {
+            x: 2, y: 4
+        }
+    ];
+
+    // when
+    const transformed = measurements.transformPointsMatrix(points,
+        x => x + 2,
+        y => y + 2
+    );
+
+    // then
+    t.deepEqual(transformed, [
+        {
+            x: 4, y: 4
+        },
+        {
+            x: 4, y: 6
+        }
+    ]);
+    t.end();
+
+});

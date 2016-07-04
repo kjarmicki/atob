@@ -7,11 +7,31 @@ export default function canvasRenderer(ctx, specs) {
     }
 
     function drawPath(current, navigating) {
-        ctx.strokeStyle = specs.lineColor;
+        // path
         ctx.beginPath();
         ctx.moveTo(current.x, current.y);
         ctx.lineTo(navigating.x, navigating.y);
+        ctx.strokeStyle = specs.lineColor;
         ctx.stroke();
+
+        // markers
+        drawCurrentPosition(current);
+        drawNavigating(navigating);
+    }
+
+    function drawCurrentPosition(current) {
+        drawCircle(current, specs.currentPositionColor);
+    }
+
+    function drawNavigating(navigating) {
+        drawCircle(navigating, specs.navigatingPositionColor);
+    }
+
+    function drawCircle(point, filling) {
+        ctx.beginPath();
+        ctx.fillStyle = filling;
+        ctx.arc(point.x, point.y, 10, 0, 2 * Math.PI);
+        ctx.fill();
     }
 
     return {clear, drawPath};
