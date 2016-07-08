@@ -6,16 +6,21 @@ import pointModel from '../../model/point';
 import canvasRenderer from '../../rendering/canvas';
 import measurements from '../../measurements/measurements';
 
+const LOOP_INTERVAL = 1000;
 export default class NavigationPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             navigatingToPoint: null,
             currentPositionPoint: null,
-            // stateful component
-            watchCoordinates: this.props.geolocationProvider.watchCoordinates,
-            stopWatchingCoordinates: this.props.geolocationProvider.stopWatchingCoordinates,
-            shouldBeUpdating: false
+            alphaRotation: 0,
+            shouldBeUpdating: false,
+            // stateful components
+            geolocationProvider: this.props.geolocationProvider,
+            orientationProvider: this.props.orientationProvider
+        };
+        this.temporaryState = {
+            currentPositionPoint: null
         };
 
         this.props.pointRepository.retrieveChosen()
@@ -35,14 +40,16 @@ export default class NavigationPage extends React.Component {
     startNavigatingTo(destinationPoint) {
         if(!this.state.shouldBeUpdating) {
             this.setState({shouldBeUpdating: true});
-            this.state.watchCoordinates(currentCoordinates => {
+            this.state.geolocationProvider.watchCoordinates(currentCoordinates => {
                 const currentPoint = pointModel(Object.assign(currentCoordinates, {
                     name: 'current'
                 }));
-                this.setState({
+                this.setTemporaryState({
                     currentPositionPoint: currentPoint
                 });
             });
+            this.state.orientationProvider.startPolling();
+            this.updateLoop();
         }
         this.setState({
             navigatingToPoint: destinationPoint
@@ -50,12 +57,28 @@ export default class NavigationPage extends React.Component {
     }
 
     stopNavigating() {
-        this.state.stopWatchingCoordinates();
+        this.state.geolocationProvider.stopWatchingCoordinates();
+        this.state.orientationProvider.stopPolling();
         this.setState({
             navigatingToPoint: null,
             currentPositionPoint: null,
+            alphaRotation: 0,
             shouldBeUpdating: false
         });
+    }
+
+    updateLoop() {
+        setTimeout(() => {
+            if(this.state.shouldBeUpdating) {
+                const alpha = this.state.orientationProvider.getAlpha();
+                this.setState(Object.assign({}, this.temporaryState, {alpha}));
+                this.updateLoop();
+            }
+        }, LOOP_INTERVAL);
+    }
+
+    setTemporaryState(newState) {
+        Object.assign(this.temporaryState, newState);
     }
 
     render() {

@@ -54,7 +54,7 @@ export default class NavigationBox extends React.Component {
                 const currentClone = Object.assign({}, currentPrescaled);
                 return measurements.transformPointsMatrix([currentPrescaled, navigatingPrescaled],
                     x => halfWidth + x - currentClone.x,
-                    y => height + y - currentClone.y
+                    y => height - (height / 4) + y - currentClone.y
                 );
             });
 

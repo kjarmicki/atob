@@ -2,7 +2,7 @@
 
 export default function browserOrientationProvider(window) {
     const EVENT_NAME = 'deviceorientation';
-    let alpha = null;
+    let alpha = 0;
 
     function startPolling() {
         window.addEventListener(EVENT_NAME, update);
@@ -13,7 +13,7 @@ export default function browserOrientationProvider(window) {
     }
 
     function update(e) {
-        alpha = e.alpha;
+        alpha = (typeof e.alpha === 'number') ? e.alpha : alpha;
     }
 
     function getAlpha() {

@@ -59,6 +59,7 @@ export default class Main extends React.Component {
                     <NavigationPage
                         pointRepository={this.props.pointRepository}
                         geolocationProvider={this.props.geolocationProvider}
+                        orientationProvider={this.props.orientationProvider}
                         events={this.props.events}
                     />
                 </div>
