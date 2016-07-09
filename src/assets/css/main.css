@@ -1,6 +1,3 @@
-/* color scheme:
-https://color.adobe.com/Aspirin-C-color-theme-251864/edit/?copy=true&base=4&rule=Custom&selected=3&name=Copy%20of%20Aspirin%20C&mode=cmyk&rgbvalues=0.13159999999999994,0.32430000000000003,0.47,0.08551295999999997,0.583278016,0.64,0.6745000000000001,0.9405,0.95,0.952941,1,0.886275,0.92,0.4968,0&swatchOrder=0,1,2,3,4
-*/
 @font-face {
     font-family: 'Droid Sans';
     font-style: normal;
@@ -19,7 +16,7 @@ https://color.adobe.com/Aspirin-C-color-theme-251864/edit/?copy=true&base=4&rule
 
 body {
     font-family: 'Droid Sans', sans-serif;
-    background: #225378;
+    background: #efeff4;
 }
 
 button {
@@ -43,18 +40,27 @@ button {
     margin: 0 1px;
 }
 
+.main-menu-item:first-child {
+    margin-left: 0;
+}
+
+.main-menu-item:first-child {
+    margin-right: 0;
+}
+
 .main-menu-item > a {
     display: block;
     width: 100%;
     height: 50px;
     line-height: 50px;
     text-align: center;
-    background: #1c1c1c;
-    color: #efefef;
+    background: #f7f7f7;
+    color: #000;
     text-decoration: none;
     text-transform: uppercase;
     font-size: 0.9em;
     position: relative;;
+    border: 1px solid #ddd;
 }
 
 .main-menu-item > .active:after {
@@ -63,7 +69,7 @@ button {
     width: 80%;
     left: 10%;
     height: 5px;
-    background-color: #1695A3;
+    background-color: #007aff;
     content: '';
     display: block;
 }
@@ -79,6 +85,7 @@ button {
     position: absolute;
     top: 0;
     left: 0;
+    padding-top: 15px;
     width: 100%;
 }
 
@@ -111,18 +118,22 @@ button {
 }
 
 .points-list {
-    margin: 15px 0 0;
+    margin: 0;
     padding: 0;
 }
 
 .point {
     display: block;
     font-size: 0.9em;
-    background: #E9F0F2;
+    background: #fff;
     height: 45px;
     line-height: 45px;
     position: relative;;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #ddd;
+}
+
+.point:first-child {
+    border-top: 1px solid #ddd;
 }
 
 .point:last-child {
@@ -130,7 +141,7 @@ button {
 }
 
 .chosen-for-navigation {
-    background-color: #F3FFE2;
+    background-color: rgba(0, 122, 255, 0.2);
 }
 
 .point h3 {
@@ -161,8 +172,8 @@ button {
 .btn {
     display: block;
     text-transform: uppercase;
-    background: #0fb5c7;
-    border: none;
+    background: #f7f7f7;
+    border: 1px solid #ddd;
     border-radius: 6px;
 }
 
@@ -231,5 +242,7 @@ input[type="text"] {
 
 .navigation-box-canvas {
     display: block;
-    background: #e9f0f2;
+    background: #fff;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
 }

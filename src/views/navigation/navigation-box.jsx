@@ -12,8 +12,8 @@ export default class NavigationBox extends React.Component {
             height: dimension
         };
         this.specs = {
-            backgroundColor: '#f3ffe2',
-            lineColor: '#0fb5c7',
+            backgroundColor: '#fff',
+            lineColor: '#007aff',
             currentPositionColor: '#dbfdaa',
             navigatingPositionColor: '#b22400'
         };
