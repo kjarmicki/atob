@@ -21,7 +21,7 @@ export default class Point extends React.Component {
         const navigation = p.chosenForNavigation ?
             <button onClick={navigationAction}>stop navigating</button> :
             <button onClick={navigationAction}>navigate</button>;
-        const itemClassName = ['point',
+        const itemClassName = ['point', 'cell',
             p.chosenForNavigation ? 'chosen-for-navigation' : ''
         ].join(' ');
 
