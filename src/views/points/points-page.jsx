@@ -23,12 +23,12 @@ export default class PointsPage extends React.Component {
     }
 
     updatePoints() {
-        this.props.pointRepository.retrieveAll()
+        return this.props.pointRepository.retrieveAll()
             .then(points => this.setState({points}));
     }
 
     removePoint(point) {
-        this.props.pointRepository.remove(point)
+        return this.props.pointRepository.remove(point)
             .then(() => this.updatePoints());
     }
 
