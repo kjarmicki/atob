@@ -5,9 +5,11 @@ import React from 'react';
 export default class NavigationBox extends React.Component {
     constructor(props) {
         super(props);
+        const win = props.window || window;
+        const dimension = window.innerWidth;
         this.state = {
-            width: 320,
-            height: 320
+            width: dimension,
+            height: dimension
         };
         this.specs = {
             backgroundColor: '#f3ffe2',
@@ -17,6 +19,14 @@ export default class NavigationBox extends React.Component {
         };
         this.ctx = null;
         this.renderer = null;
+
+        win.addEventListener('resize', () => {
+            const dimension = win.innerWidth;
+            this.setState({
+                width: dimension,
+                height: dimension
+            });
+        });
     }
     componentDidUpdate() {
         if(!this.areBothPointsPresent()) {
