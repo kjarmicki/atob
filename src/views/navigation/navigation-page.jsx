@@ -70,8 +70,8 @@ export default class NavigationPage extends React.Component {
     updateLoop() {
         setTimeout(() => {
             if(this.state.shouldBeUpdating) {
-                const alpha = this.state.orientationProvider.getAlpha();
-                this.setState(Object.assign({}, this.temporaryState, {alpha}));
+                const alphaRotation = this.state.orientationProvider.getAlpha();
+                this.setState(Object.assign({}, this.temporaryState, {alphaRotation}));
                 this.updateLoop();
             }
         }, LOOP_INTERVAL);
@@ -91,6 +91,7 @@ export default class NavigationPage extends React.Component {
                 <NavigationBox
                     measurements={measurements}
                     canvasRenderer={canvasRenderer}
+                    alphaRotation={this.state.alphaRotation}
                     navigatingToPoint={this.state.navigatingToPoint}
                     currentPositionPoint={this.state.currentPositionPoint}
                 />

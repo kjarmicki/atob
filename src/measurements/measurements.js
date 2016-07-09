@@ -1,6 +1,6 @@
 'use strict';
 
-export default {coordsToPx, scalePointsToQuadraticArea, transformPointsMatrix};
+export default {coordsToPx, scalePointsToQuadraticArea, transformPointsMatrix, rotatePointsMatrix};
 
 function coordsToPx(coords, area) {
     const x = (area.width/360) * (180 + coords.longitude);
@@ -40,8 +40,20 @@ function scalePointsToQuadraticArea(points, sideWidth) {
 
 function transformPointsMatrix(points, transformX, transformY) {
     return points.map(point => {
-        point.x = transformX(point.x);
-        point.y = transformY(point.y);
+        const cloned = Object.assign({}, point);
+        point.x = transformX(cloned.x, cloned.y);
+        point.y = transformY(cloned.x, cloned.y);
         return point;
     });
+}
+
+function rotatePointsMatrix(points, origin, angle) {
+    const radians = (Math.PI / 180) * angle;
+    const cos = Math.cos(radians);
+    const sin = Math.sin(radians);
+
+    return transformPointsMatrix(points,
+        (x, y) => (cos * (x - origin.x)) + (sin * (y - origin.y)) + origin.x,
+        (x, y) => (cos * (y - origin.y)) - (sin * (x - origin.x)) + origin.y
+    );
 }

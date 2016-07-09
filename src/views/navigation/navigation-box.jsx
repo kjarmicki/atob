@@ -35,6 +35,7 @@ export default class NavigationBox extends React.Component {
     drawPathBetweenPoints() {
         const {width, height} = this.state;
         const halfWidth = width/2;
+        const rotation = this.props.alphaRotation;
         const measurements = this.props.measurements;
 
         const [[currentScaled, navigatingScaled]] =
@@ -45,6 +46,11 @@ export default class NavigationBox extends React.Component {
                     return measurements.coordsToPx(point.serialize(), {width, height});
                 });
             })
+            // rotate points according to accelerometer
+            .map(([currentPx, navigatingPx]) => {
+                const currentClone = Object.assign({}, currentPx);
+                return measurements.rotatePointsMatrix([currentPx, navigatingPx], currentClone, rotation);
+            })
             // scale px values to canvas width
             .map(pointsPx => {
                 return measurements.scalePointsToQuadraticArea(pointsPx, width);
@@ -53,8 +59,8 @@ export default class NavigationBox extends React.Component {
             .map(([currentPrescaled, navigatingPrescaled]) => {
                 const currentClone = Object.assign({}, currentPrescaled);
                 return measurements.transformPointsMatrix([currentPrescaled, navigatingPrescaled],
-                    x => halfWidth + x - currentClone.x,
-                    y => height - (height / 4) + y - currentClone.y
+                    (x, y) => halfWidth + x - currentClone.x,
+                    (x, y) => height - (height / 4) + y - currentClone.y
                 );
             });
 

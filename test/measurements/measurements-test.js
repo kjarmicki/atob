@@ -171,8 +171,8 @@ tape('measurements module should be able to transform points martix', t => {
 
     // when
     const transformed = measurements.transformPointsMatrix(points,
-        x => x + 2,
-        y => y + 2
+        (x, y) => x + 2,
+        (x, y) => y + 2
     );
 
     // then
@@ -185,5 +185,25 @@ tape('measurements module should be able to transform points martix', t => {
         }
     ]);
     t.end();
+});
 
+tape('measurements module should be able to rotate points matrix', t => {
+    // given
+    const points = [
+        {
+            x: 5, y: 0
+        }
+    ];
+    const origin = {
+        x: 0, y: 0
+    };
+    const angle = 90;
+
+    // when
+    const [rotated] = measurements.rotatePointsMatrix(points, origin, angle);
+
+    // then
+    t.equal(Math.round(rotated.x), 0);
+    t.equal(Math.round(rotated.y), -5);
+    t.end();
 });
