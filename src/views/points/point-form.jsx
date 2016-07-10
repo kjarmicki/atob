@@ -9,6 +9,7 @@ export default class PointForm extends React.Component {
         super(props);
         this.state = {
             name: '',
+            message: '',
             formVisible: false
         };
         this.input = null;
@@ -38,8 +39,25 @@ export default class PointForm extends React.Component {
     submitPoint(e) {
         e.preventDefault();
         const name = this.state.name.trim();
+        const breaking = new Error('breaking error');
 
-        return this.props.geolocationProvider.getCoordinates()
+        return this.validatePoint({name})
+            .catch(err => {
+                this.setState({
+                    message: err.message
+                });
+                this.input.focus();
+                return Promise.reject(breaking);
+            })
+            .then(() => this.props.geolocationProvider.getCoordinates())
+            .catch(err => {
+                if(err !== breaking) {
+                    this.setState({
+                        message: 'Could not get GPS data'
+                    });
+                }
+                return Promise.reject(breaking);
+            })
             .then(coordinates => this.storePoint(name, coordinates))
             .then(() => {
                 this.setState({
@@ -50,7 +68,11 @@ export default class PointForm extends React.Component {
                 return null;
             })
             .catch(err => {
-                console.error(err);
+                if(err !== breaking) {
+                    this.setState({
+                        message: 'Could not create a new point'
+                    });
+                }
             });
     }
 
@@ -61,18 +83,45 @@ export default class PointForm extends React.Component {
         return this.props.pointRepository.store(point);
     }
 
+    validatePoint({name}) {
+        // does a point have a valid name?
+        return new Promise((resolve, reject) => {
+            try {
+                pointModel.validate({name});
+                resolve();
+            }
+            catch(err) {
+                reject(err);
+            }
+        })
+        // does a point have a unique name?
+        .then(() => this.props.pointRepository.retrieveAll())
+        .then(points => {
+            if(!points.every(point => point.serialize().name !== name)) {
+                return Promise.reject(new Error('Point with such name already exists'));
+            }
+            return Promise.resolve();
+        });
+    }
+
     render() {
         const pointFormWrapperClassNames = ['point-form-wrapper',
             this.state.formVisible ? 'point-form-visible' : ''
+        ].join(' ');
+        const pointFormClassNames = ['point-form',
+            this.state.message ? 'message-visible' : ''
         ].join(' ');
         return(
             <div className={pointFormWrapperClassNames}>
                 <button className="btn point-form-trigger" onClick={this.showForm.bind(this)}>Add a new point at current location</button>
                 <div className="point-form-overlay">
-                    <form className="point-form" onSubmit={this.submitPoint.bind(this)}>
-                        <input ref={input => input && (this.input = input)} type="text" onChange={this.updateName.bind(this)} value={this.state.name} name="name" className="new-point-name" placeholder="enter a point name" />
-                        <input className="btn" type="submit" value="save" />
-                        <button className="btn point-form-cancel" onClick={this.hideForm.bind(this)}>cancel</button>
+                    <form className={pointFormClassNames} onSubmit={this.submitPoint.bind(this)}>
+                        <div className="point-form-inputs">
+                            <input ref={input => input && (this.input = input)} type="text" onChange={this.updateName.bind(this)} value={this.state.name} name="name" className="new-point-name" placeholder="enter a point name" />
+                            <input className="btn" type="submit" value="save" />
+                            <button className="btn point-form-cancel" onClick={this.hideForm.bind(this)}>cancel</button>
+                        </div>
+                        <div className="point-form-message">{this.state.message}</div>
                     </form>
                 </div>
             </div>

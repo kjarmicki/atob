@@ -6,7 +6,7 @@ import geolib from 'geolib';
  * Object factory of models representing point on a map
  */
 
-export default function point({name, latitude, longitude, createdAt = Date.now(), chosenForNavigation = false}) {
+function point({name, latitude, longitude, createdAt = Date.now(), chosenForNavigation = false}) {
     const instance = {getName, getLatitude, getLongitude, getCreatedAt,
         equals, uniqueKey, serialize, distanceFrom,
         isChosenForNavigation, chooseForNavigation, disregardForNavigation};
@@ -71,3 +71,11 @@ export default function point({name, latitude, longitude, createdAt = Date.now()
 
     return instance;
 }
+
+point.validate = function(data) {
+    if(!data.name) {
+        throw new Error('Point should have a name');
+    }
+};
+
+export default point;

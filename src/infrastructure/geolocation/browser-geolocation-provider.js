@@ -11,7 +11,9 @@ export default function browserGeolocationProvider(window) {
                 position => {
                     resolve(convertToLatLng(position.coords));
                 },
-                reject, {
+                err => {
+                    reject(new Error(err.message));
+                }, {
                     enableHighAccuracy: true
                 }
             );
