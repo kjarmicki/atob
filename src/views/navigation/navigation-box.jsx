@@ -1,6 +1,7 @@
 'use strict';
 
 import React from 'react';
+import assign from 'object-assign';
 
 export default class NavigationBox extends React.Component {
     constructor(props) {
@@ -14,8 +15,7 @@ export default class NavigationBox extends React.Component {
         this.specs = {
             backgroundColor: '#fff',
             lineColor: '#007aff',
-            currentPositionColor: '#dbfdaa',
-            navigatingPositionColor: '#b22400'
+            currentPositionColor: '#007aff'
         };
         this.ctx = null;
         this.renderer = null;
@@ -34,7 +34,7 @@ export default class NavigationBox extends React.Component {
             this.renderer = null;
             return;
         }
-        this.renderer = this.props.canvasRenderer(this.ctx, Object.assign({}, this.specs, this.state));
+        this.renderer = this.props.canvasRenderer(this.ctx, assign({}, this.specs, this.state));
         this.renderer.clear();
         this.drawPathBetweenPoints();
 
@@ -58,16 +58,23 @@ export default class NavigationBox extends React.Component {
             })
             // rotate points according to accelerometer
             .map(([currentPx, navigatingPx]) => {
-                const currentClone = Object.assign({}, currentPx);
+                const currentClone = assign({}, currentPx);
                 return measurements.rotatePointsMatrix([currentPx, navigatingPx], currentClone, rotation);
             })
-            // scale px values to canvas width
+            // scale px values to canvas width with some padding
             .map(pointsPx => {
-                return measurements.scalePointsToQuadraticArea(pointsPx, width);
+                return measurements.scalePointsToQuadraticArea(pointsPx, width + 0.2 * width)
+            })
+            // round'em up
+            .map(prescaledPx => {
+                return measurements.transformPointsMatrix(prescaledPx,
+                    (x, y) => Math.round(x),
+                    (x, y) => Math.round(y)
+                );
             })
             // transform the matrix so current position is at bottom center of canvas
             .map(([currentPrescaled, navigatingPrescaled]) => {
-                const currentClone = Object.assign({}, currentPrescaled);
+                const currentClone = assign({}, currentPrescaled);
                 return measurements.transformPointsMatrix([currentPrescaled, navigatingPrescaled],
                     (x, y) => halfWidth + x - currentClone.x,
                     (x, y) => height - (height / 4) + y - currentClone.y

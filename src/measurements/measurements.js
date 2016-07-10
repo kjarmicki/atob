@@ -1,5 +1,7 @@
 'use strict';
 
+import assign from 'object-assign';
+
 export default {coordsToPx, scalePointsToQuadraticArea, transformPointsMatrix, rotatePointsMatrix};
 
 function coordsToPx(coords, area) {
@@ -40,7 +42,7 @@ function scalePointsToQuadraticArea(points, sideWidth) {
 
 function transformPointsMatrix(points, transformX, transformY) {
     return points.map(point => {
-        const cloned = Object.assign({}, point);
+        const cloned = assign({}, point);
         point.x = transformX(cloned.x, cloned.y);
         point.y = transformY(cloned.x, cloned.y);
         return point;

@@ -14,6 +14,10 @@
     unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
 }
 
+* {
+    -webkit-tap-highlight-color: rgba(0, 122, 255, 0.2);
+}
+
 body {
     font-family: 'Droid Sans', sans-serif;
     background: #efeff4;
@@ -32,12 +36,18 @@ button {
     list-style: none;
     padding: 0;
     margin: 10px 0 0;
+    display: -webkit-box;
+    display: -webkit-flex;
     display: flex;
 }
 
 .main-menu-item {
-    width: 100%;
+    display: block;
+    width: 50%;
+    box-sizing: border-box;
     margin: 0 1px;
+    -webkit-flex: 1;
+    flex: 1;
 }
 
 .main-menu-item:first-child {
@@ -78,7 +88,9 @@ button {
 .pages {
     position: relative;
     height: calc(100vh - 77px);
+    -webkit-transform: translate(0, 0);
     transform: translate(0, 0);
+    -webkit-transition: -webkit-transform 0.15s;
     transition: transform 0.15s;
 }
 
@@ -95,10 +107,12 @@ button {
 }
 
 .navigation-page {
+    -webkit-transform: translate(100%, 0);
     transform: translate(100%, 0);
 }
 
 .page-selected-navigation {
+    -webkit-transform: translate(-100%, 0);
     transform: translate(-100%, 0);
 }
 
@@ -107,10 +121,12 @@ button {
 }
 
 .points-page {
+    -webkit-transform: translate(0, 0);
     transform: translate(0, 0);
 }
 
 .page-selected-points {
+    -webkit-transform: translate(0, 0);
     transform: translate(0, 0);
 }
 
@@ -146,6 +162,10 @@ button {
     background-color: rgba(0, 122, 255, 0.2);
 }
 
+.no-navigation-points-available {
+    text-align: center;
+}
+
 .point h3 {
     margin: 0;
     font-weight: normal;
@@ -165,6 +185,7 @@ button {
     margin: 0 15px 0 0;
     padding: 0 0;
     font-size: 0.85em;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .control-remove {
@@ -186,6 +207,11 @@ input[type="text"] {
     font-size: 0.9em;
 }
 
+input[type="text"]:focus {
+    outline: 0;
+    box-shadow: 0px 0px 5px #007aff;
+}
+
 .point-form-trigger {
     width: 85%;
     margin: 35px auto 10px;
@@ -205,6 +231,7 @@ input[type="text"] {
     align-items: center;
     background-color: rgba(0,0,0,0);
 
+    -webkit-transition: background-color 1.5s;
     transition: background-color 1.5s;
 }
 
@@ -224,6 +251,7 @@ input[type="text"] {
     box-shadow: 0 0 15px rgba(0,0,0,.5);
     justify-content: center;
 
+    -webkit-transition: margin-top 1s;
     transition: margin-top 1s;
 }
 
@@ -254,6 +282,10 @@ input[type="text"] {
 
 .navigation-box-canvas {
     display: block;
+}
+
+.navigation-distance {
+    text-align: center;
 }
 
 @media screen and (min-width: 375px) {

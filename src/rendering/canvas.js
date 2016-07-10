@@ -14,17 +14,12 @@ export default function canvasRenderer(ctx, specs) {
         ctx.strokeStyle = specs.lineColor;
         ctx.stroke();
 
-        // markers
+        // marker
         drawCurrentPosition(current);
-        drawNavigating(navigating);
     }
 
     function drawCurrentPosition(current) {
         drawCircle(current, specs.currentPositionColor);
-    }
-
-    function drawNavigating(navigating) {
-        drawCircle(navigating, specs.navigatingPositionColor);
     }
 
     function drawCircle(point, filling) {

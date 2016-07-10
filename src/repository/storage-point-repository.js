@@ -39,7 +39,7 @@ export default function storagePointRepository(storage) {
         try {
             const values = [];
             for(const key in storage) {
-                if(storage.hasOwnProperty(key) && key.startsWith(namespace)) {
+                if(storage.hasOwnProperty(key) && key.indexOf(namespace) === 0) {
                     values.push(
                         pointModel(JSON.parse(storage.getItem(key)))
                     );

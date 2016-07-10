@@ -1,6 +1,7 @@
 'use strict';
 
 import React from 'react';
+import assign from 'object-assign';
 import pointModel from '../../model/point';
 
 export default class PointForm extends React.Component {
@@ -10,6 +11,7 @@ export default class PointForm extends React.Component {
             name: '',
             formVisible: false
         };
+        this.input = null;
     }
 
     updateName(e) {
@@ -18,10 +20,18 @@ export default class PointForm extends React.Component {
         });
     }
 
-    toggleFormVisibility(e) {
+    showForm(e) {
         e && e.preventDefault();
         this.setState({
-            formVisible: !this.state.formVisible
+            formVisible: true
+        });
+        this.input.focus();
+    }
+
+    hideForm(e) {
+        e && e.preventDefault();
+        this.setState({
+            formVisible: false
         });
     }
 
@@ -29,14 +39,15 @@ export default class PointForm extends React.Component {
         e.preventDefault();
         const name = this.state.name.trim();
 
-        this.props.geolocationProvider.getCoordinates()
+        return this.props.geolocationProvider.getCoordinates()
             .then(coordinates => this.storePoint(name, coordinates))
             .then(() => {
                 this.setState({
                     name: ''
                 });
                 this.props.events.emit('point.add');
-                this.toggleFormVisibility();
+                this.hideForm();
+                return null;
             })
             .catch(err => {
                 console.error(err);
@@ -44,7 +55,7 @@ export default class PointForm extends React.Component {
     }
 
     storePoint(name, coordinates) {
-        const point = pointModel(Object.assign({}, coordinates, {
+        const point = pointModel(assign({}, coordinates, {
             name: name
         }));
         return this.props.pointRepository.store(point);
@@ -56,12 +67,12 @@ export default class PointForm extends React.Component {
         ].join(' ');
         return(
             <div className={pointFormWrapperClassNames}>
-                <button className="btn point-form-trigger" onClick={this.toggleFormVisibility.bind(this)}>Add a new point at current location</button>
+                <button className="btn point-form-trigger" onClick={this.showForm.bind(this)}>Add a new point at current location</button>
                 <div className="point-form-overlay">
                     <form className="point-form" onSubmit={this.submitPoint.bind(this)}>
-                        <input type="text" onChange={this.updateName.bind(this)} value={this.state.name} name="name" className="new-point-name" placeholder="enter a point name" />
+                        <input ref={input => input && (this.input = input)} type="text" onChange={this.updateName.bind(this)} value={this.state.name} name="name" className="new-point-name" placeholder="enter a point name" />
                         <input className="btn" type="submit" value="save" />
-                        <button className="btn point-form-cancel" onClick={this.toggleFormVisibility.bind(this)}>cancel</button>
+                        <button className="btn point-form-cancel" onClick={this.hideForm.bind(this)}>cancel</button>
                     </form>
                 </div>
             </div>

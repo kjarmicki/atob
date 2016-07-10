@@ -2,6 +2,7 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import FastClick from 'fastclick';
 import {EventEmitter} from 'events';
 import Main from './views/main';
 
@@ -16,6 +17,8 @@ document.addEventListener('deviceready', () => {
     const geolocationProvider = browserGeolocationProvider(window);
     const orientationProvider = browserOrientationProvider(window);
     const events = new EventEmitter();
+
+    FastClick.attach(document.body);
 
     ReactDOM.render(
         <Main

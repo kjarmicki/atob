@@ -1,6 +1,7 @@
 'use strict';
 
 import React from 'react';
+import assign from 'object-assign';
 import NavigationBox from './navigation-box';
 import pointModel from '../../model/point';
 import canvasRenderer from '../../rendering/canvas';
@@ -41,7 +42,7 @@ export default class NavigationPage extends React.Component {
         if(!this.state.shouldBeUpdating) {
             this.setState({shouldBeUpdating: true});
             this.state.geolocationProvider.watchCoordinates(currentCoordinates => {
-                const currentPoint = pointModel(Object.assign(currentCoordinates, {
+                const currentPoint = pointModel(assign(currentCoordinates, {
                     name: 'current'
                 }));
                 this.setTemporaryState({
@@ -71,14 +72,14 @@ export default class NavigationPage extends React.Component {
         setTimeout(() => {
             if(this.state.shouldBeUpdating) {
                 const alphaRotation = this.state.orientationProvider.getAlpha();
-                this.setState(Object.assign({}, this.temporaryState, {alphaRotation}));
+                this.setState(assign({}, this.temporaryState, {alphaRotation}));
                 this.updateLoop();
             }
         }, LOOP_INTERVAL);
     }
 
     setTemporaryState(newState) {
-        Object.assign(this.temporaryState, newState);
+        assign(this.temporaryState, newState);
     }
 
     render() {

@@ -33,7 +33,7 @@ export default class PointsPage extends React.Component {
     }
 
     choosePoint(point) {
-        const currentlyChosen = this.state.points.find(point => point.isChosenForNavigation());
+        const currentlyChosen = this.state.points.filter(point => point.isChosenForNavigation())[0];
         const operations = [];
         if(currentlyChosen) {
             const previous = currentlyChosen.disregardForNavigation();
@@ -54,15 +54,21 @@ export default class PointsPage extends React.Component {
     }
 
     render() {
-        const points = this.state.points.map(point => {
-            return (
-                <Point
-                    key={point.uniqueKey()}
-                    model={point}
-                    events={this.props.events}
-                />
-            )
-        });
+        let points;
+        if(this.state.points.length > 0) {
+            points = this.state.points.map(point => {
+                return (
+                    <Point
+                        key={point.uniqueKey()}
+                        model={point}
+                        events={this.props.events}
+                        />
+                )
+            });
+        }
+        else {
+            points = <div className="cell no-navigation-points-available">There are no navigation points available</div>;
+        }
         return(
             <div className="points-page">
                 <ul className="points-list">
