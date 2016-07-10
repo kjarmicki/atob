@@ -29,15 +29,11 @@ export default class NavigationBox extends React.Component {
         });
     }
     componentDidUpdate() {
-        if(!this.areBothPointsPresent()) {
-            this.ctx = null;
-            this.renderer = null;
-            return;
-        }
         this.renderer = this.props.canvasRenderer(this.ctx, assign({}, this.specs, this.state));
         this.renderer.clear();
-        this.drawPathBetweenPoints();
-
+        if(this.areBothPointsPresent()) {
+            this.drawPathBetweenPoints();
+        }
     }
     areBothPointsPresent() {
         return !!(this.props.navigatingToPoint && this.props.currentPositionPoint);
@@ -84,16 +80,13 @@ export default class NavigationBox extends React.Component {
         this.renderer.drawPath(currentScaled, navigatingScaled);
     }
     render() {
-        const content = this.areBothPointsPresent() ?
-            <canvas className="navigation-box-canvas"
+        return(
+            <div className="navigation-box">
+                <canvas className="navigation-box-canvas"
                     ref={canvas => canvas && (this.ctx = canvas.getContext('2d')) }
                     width={this.state.width}
                     height={this.state.height}>
-            </canvas> :
-            '';
-        return(
-            <div className="navigation-box">
-                {content}
+                </canvas>
             </div>
         );
     }

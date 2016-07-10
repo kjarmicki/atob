@@ -18,6 +18,10 @@
     -webkit-tap-highlight-color: rgba(0, 122, 255, 0.2);
 }
 
+html, body, #main, .main-view {
+    height: 100%;
+}
+
 body {
     font-family: 'Droid Sans', sans-serif;
     background: #efeff4;
@@ -28,6 +32,11 @@ button {
     background: transparent;
 }
 
+.main-view {
+    box-sizing: border-box;
+    padding-top: 15px;
+}
+
 .main-view.page-transition-progress-running {
     overflow: hidden;
 }
@@ -35,7 +44,7 @@ button {
 .main-menu-list {
     list-style: none;
     padding: 0;
-    margin: 10px 0 0;
+    margin: 0;
     display: -webkit-box;
     display: -webkit-flex;
     display: flex;
@@ -45,17 +54,17 @@ button {
     display: block;
     width: 50%;
     box-sizing: border-box;
-    margin: 0 1px;
+    padding: 0 1px;
     -webkit-flex: 1;
     flex: 1;
 }
 
 .main-menu-item:first-child {
-    margin-left: 0;
+    padding-left: 0;
 }
 
 .main-menu-item:last-child {
-    margin-right: 0;
+    padding-right: 0;
 }
 
 .main-menu-item > a {
@@ -87,11 +96,10 @@ button {
 
 .pages {
     position: relative;
-    height: calc(100vh - 77px);
     -webkit-transform: translate(0, 0);
     transform: translate(0, 0);
-    -webkit-transition: -webkit-transform 0.15s;
-    transition: transform 0.15s;
+    -webkit-transition: -webkit-transform 0.2s;
+    transition: transform 0.2s;
 }
 
 [class$=page] {
@@ -225,8 +233,8 @@ input[type="text"]:focus {
     position: absolute;
     top: -1000px;
     left: 0;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     display: flex;
     align-items: center;
     background-color: rgba(0,0,0,0);
@@ -236,7 +244,7 @@ input[type="text"]:focus {
 }
 
 .point-form-visible .point-form-overlay {
-    top: -60px;
+    top: 0;
     background-color: rgba(0,0,0,.4);
 }
 
@@ -272,16 +280,21 @@ input[type="text"]:focus {
 }
 
 .navigation-box {
+    position: relative;
     background: #fff;
     border-top: 1px solid #ddd;
     border-bottom: 1px solid #ddd;
     margin-bottom: 15px;
-    width: 100vw;
-    height: 100vw;
+    width: 100%;
+    height: 0;
+    padding-top: 100%;
 }
 
 .navigation-box-canvas {
     display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
 .navigation-distance {
