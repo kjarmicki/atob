@@ -41,7 +41,7 @@ export default class NavigationBox extends React.Component {
     drawPathBetweenPoints() {
         const {width, height} = this.state;
         const halfWidth = width/2;
-        const rotation = this.props.alphaRotation;
+        const rotation = this.props.alphaRotation * -1;
         const measurements = this.props.measurements;
 
         const [[currentScaled, navigatingScaled]] =
