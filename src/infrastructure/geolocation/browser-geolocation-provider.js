@@ -12,7 +12,7 @@ export default function browserGeolocationProvider(window) {
                     resolve(convertToLatLng(position.coords));
                 },
                 err => {
-                    reject(new Error(err.message));
+                    reject(new Error('Could not get GPS data'));
                 }, {
                     enableHighAccuracy: true
                 }

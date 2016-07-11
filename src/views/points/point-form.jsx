@@ -39,25 +39,9 @@ export default class PointForm extends React.Component {
     submitPoint(e) {
         e.preventDefault();
         const name = this.state.name.trim();
-        const breaking = new Error('breaking error');
 
         return this.validatePoint({name})
-            .catch(err => {
-                this.setState({
-                    message: err.message
-                });
-                this.input.focus();
-                return Promise.reject(breaking);
-            })
             .then(() => this.props.geolocationProvider.getCoordinates())
-            .catch(err => {
-                if(err !== breaking) {
-                    this.setState({
-                        message: 'Could not get GPS data'
-                    });
-                }
-                return Promise.reject(breaking);
-            })
             .then(coordinates => this.storePoint(name, coordinates))
             .then(() => {
                 this.setState({
@@ -65,14 +49,12 @@ export default class PointForm extends React.Component {
                 });
                 this.props.events.emit('point.add');
                 this.hideForm();
-                return null;
             })
             .catch(err => {
-                if(err !== breaking) {
-                    this.setState({
-                        message: 'Could not create a new point'
-                    });
-                }
+                this.setState({
+                    message: err.message
+                });
+                this.input.focus();
             });
     }
 
@@ -86,13 +68,8 @@ export default class PointForm extends React.Component {
     validatePoint({name}) {
         // does a point have a valid name?
         return new Promise((resolve, reject) => {
-            try {
-                pointModel.validate({name});
-                resolve();
-            }
-            catch(err) {
-                reject(err);
-            }
+            pointModel.validate({name});
+            resolve();
         })
         // does a point have a unique name?
         .then(() => this.props.pointRepository.retrieveAll())
