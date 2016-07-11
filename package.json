@@ -8,12 +8,13 @@
     "cordova:create": "cordova create dist/cordova com.github.kjarmicki AtoB",
     "cordova:platform:android": "cd dist/cordova && cordova platform add android@4.0.2 --save",
     "cordova:move": "cp dist/browser/index.html dist/cordova/www/. && cp dist/browser/js/bundle.js dist/cordova/www/js/.",
-    "cordova:build": "cd dist/cordova && cordova build",
+    "cordova:plugins": "cd dist/cordova && cordova plugin add cordova-plugin-geolocation",
+    "cordova:build": "cd dist/cordova && cordova build --device",
     "clean": "rm -rf dist",
     "test": "tape -r babel-register 'test/**/*-test.js' | tap-spec",
     "build": "npm run clean && webpack",
     "dev": "google-chrome https://localhost:8080 && webpack-dev-server --host 0.0.0.0 --https",
-    "cordova": "npm run build && npm run cordova:create && npm run cordova:platform:android && npm run cordova:move && npm run cordova:build"
+    "cordova": "npm run build && npm run cordova:create && npm run cordova:platform:android && npm run cordova:plugins && npm run cordova:move && npm run cordova:build"
   },
   "author": "Krystian Jarmicki",
   "license": "ISC",
