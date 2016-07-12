@@ -32,7 +32,7 @@ tape('browser geolocation provider should be able to provide location', t => {
     const window = {
         navigator: { geolocation: { getCurrentPosition(success, error) {
             setTimeout(() => { success({
-                coords: { latitude: 1, longitude: 2 }
+                coords: { latitude: 1, longitude: 2, accuracy: 3 }
             }); }, 50);
         } } }
     };
@@ -43,22 +43,22 @@ tape('browser geolocation provider should be able to provide location', t => {
 
     // then
         .then(coordinates => {
-            t.deepEqual(coordinates, { latitude: 1, longitude: 2 });
+            t.deepEqual(coordinates, { latitude: 1, longitude: 2, accuracy: 3 });
             t.end();
         });
 });
 
 tape('polled promise function should return correct results', t => {
     // given
-    let latitude, longitude;
-    latitude = longitude = 0;
+    let latitude, longitude, accuracy;
+    latitude = longitude = accuracy = 0;
 
     const window = {
         navigator: { geolocation: {
             _id: null,
             watchPosition(success, error) {
                 this._id = setTimeout(() => { success({
-                    coords: { latitude: latitude++, longitude: longitude++ }
+                    coords: { latitude: latitude++, longitude: longitude++, accuracy: accuracy++ }
                 }); this.watchPosition(success, error) }, 40);
             },
             clearWatch() {
@@ -80,11 +80,11 @@ tape('polled promise function should return correct results', t => {
     }, 20);
 
     setTimeout(() => {
-        t.deepEqual(result, {latitude: 0, longitude: 0}, 'result obtained for the first time');
+        t.deepEqual(result, {latitude: 0, longitude: 0, accuracy: 0}, 'result obtained for the first time');
     }, 60);
 
     setTimeout(() => {
-        t.deepEqual(result, {latitude: 1, longitude: 1}, 'result obtained for the second time');
+        t.deepEqual(result, {latitude: 1, longitude: 1, accuracy: 1}, 'result obtained for the second time');
         bgp.stopWatchingCoordinates();
         t.end();
     }, 100);

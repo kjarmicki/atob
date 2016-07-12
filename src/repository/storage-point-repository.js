@@ -35,7 +35,11 @@ export default function storagePointRepository(storage) {
         return `${namespace}-${point.uniqueKey()}`;
     }
 
-    function retrieveAll() {
+    function defaultOrder(a, b) {
+        return b.getCreatedAt() - a.getCreatedAt();
+    }
+
+    function retrieveAll(order = defaultOrder) {
         try {
             const values = [];
             for(const key in storage) {
@@ -45,7 +49,8 @@ export default function storagePointRepository(storage) {
                     );
                 }
             }
-            return Promise.resolve(values);
+            const sortedValues = values.sort(order);
+            return Promise.resolve(sortedValues);
         } catch(e) {
             return Promise.reject(e);
         }
