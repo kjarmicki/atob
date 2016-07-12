@@ -1,6 +1,7 @@
 'use strict';
 
 import React from 'react';
+import moment from 'moment';
 
 export default class Point extends React.Component {
     remove() {
@@ -18,20 +19,27 @@ export default class Point extends React.Component {
         const navigationAction = p.chosenForNavigation ?
             this.disregard.bind(this) :
             this.choose.bind(this);
+        const createdAt = moment(p.createdAt);
         const navigation = p.chosenForNavigation ?
             <button onClick={navigationAction}>stop navigating</button> :
             <button onClick={navigationAction}>navigate</button>;
-        const itemClassName = ['point', 'cell',
+        const itemClassName = ['point',
             p.chosenForNavigation ? 'chosen-for-navigation' : ''
         ].join(' ');
 
         return (
             <li className={itemClassName}>
-                <h3 onClick={navigationAction}>{p.name}</h3>
-                <p className="point-controls">
-                    {navigation}
-                    <button className="control-remove" onClick={this.remove.bind(this)}>remove</button>
-                </p>
+                <div className="cell">
+                    <h3 onClick={navigationAction}>{p.name}</h3>
+                    <p className="point-controls">
+                        {navigation}
+                        <button className="control-remove" onClick={this.remove.bind(this)}>remove</button>
+                    </p>
+                </div>
+                <div className="point-details">
+                    <p className="point-detail">Accuracy: {p.accuracy} meters</p>
+                    <p className="point-detail">Created at: {createdAt.format('DD.MM.YY, HH:mm')}</p>
+                </div>
             </li>
         )
     }

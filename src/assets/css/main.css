@@ -166,7 +166,21 @@ button {
     margin-bottom: 0;
 }
 
-.chosen-for-navigation {
+.point-details {
+    background: #f6f6f6;
+    font-size: 0.75em;
+    padding: 0 15px;
+    height: 42px;
+    border-bottom: 1px solid #ddd;
+    line-height: 20px;
+}
+
+.point-detail {
+    margin: 0;
+    padding: 0;
+}
+
+.chosen-for-navigation .cell {
     background-color: rgba(0, 122, 255, 0.2);
 }
 
@@ -174,10 +188,14 @@ button {
     text-align: center;
 }
 
+.point .cell {
+    border: none;
+}
+
 .point h3 {
     margin: 0;
     font-weight: normal;
-    font-size: 1em;
+    font-size: 1.1em;
 }
 
 .point-controls {
@@ -192,7 +210,7 @@ button {
     border: none;
     margin: 0 15px 0 0;
     padding: 0 0;
-    font-size: 0.85em;
+    font-size: 0.90em;
     -webkit-tap-highlight-color: transparent;
 }
 
@@ -217,7 +235,7 @@ input[type="text"] {
 
 input[type="text"]:focus {
     outline: 0;
-    box-shadow: 0px 0px 5px #007aff;
+    box-shadow: 0 0 5px #007aff;
 }
 
 .point-form-trigger {
