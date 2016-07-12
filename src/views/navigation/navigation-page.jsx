@@ -2,12 +2,12 @@
 
 import React from 'react';
 import assign from 'object-assign';
+import raf from 'raf';
 import NavigationBox from './navigation-box';
 import pointModel from '../../model/point';
 import canvasRenderer from '../../rendering/canvas';
 import measurements from '../../measurements/measurements';
 
-const LOOP_INTERVAL = 1000;
 export default class NavigationPage extends React.Component {
     constructor(props) {
         super(props);
@@ -69,13 +69,14 @@ export default class NavigationPage extends React.Component {
     }
 
     updateLoop() {
-        setTimeout(() => {
+        let loop;
+        raf(loop = () => {
             if(this.state.shouldBeUpdating) {
                 const alphaRotation = this.state.orientationProvider.getAlpha();
                 this.setState(assign({}, this.temporaryState, {alphaRotation}));
-                this.updateLoop();
+                raf(loop);
             }
-        }, LOOP_INTERVAL);
+        });
     }
 
     setTemporaryState(newState) {
