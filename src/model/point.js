@@ -6,8 +6,8 @@ import geolib from 'geolib';
  * Object factory of models representing point on a map
  */
 
-function point({name, latitude, longitude, createdAt = Date.now(), chosenForNavigation = false}) {
-    const instance = {getName, getLatitude, getLongitude, getCreatedAt,
+function point({name, latitude, longitude, accuracy, createdAt = Date.now(), chosenForNavigation = false}) {
+    const instance = {getName, getLatitude, getLongitude, getAccuracy, getCreatedAt,
         equals, uniqueKey, serialize, distanceFrom,
         isChosenForNavigation, chooseForNavigation, disregardForNavigation};
 
@@ -21,6 +21,10 @@ function point({name, latitude, longitude, createdAt = Date.now(), chosenForNavi
 
     function getLongitude() {
         return longitude;
+    }
+
+    function getAccuracy() {
+        return accuracy;
     }
 
     function getCreatedAt() {
@@ -50,6 +54,7 @@ function point({name, latitude, longitude, createdAt = Date.now(), chosenForNavi
             getLatitude() === otherPoint.getLatitude() &&
             getLongitude() === otherPoint.getLongitude() &&
             getCreatedAt() === otherPoint.getCreatedAt() &&
+            getAccuracy() === otherPoint.getAccuracy() &&
             isChosenForNavigation() == otherPoint.isChosenForNavigation();
     }
 
@@ -58,7 +63,7 @@ function point({name, latitude, longitude, createdAt = Date.now(), chosenForNavi
     }
 
     function serialize() {
-        return {name, latitude, longitude, createdAt, chosenForNavigation};
+        return {name, latitude, longitude, accuracy, createdAt, chosenForNavigation};
     }
 
     function distanceFrom(otherPoint) {

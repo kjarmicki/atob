@@ -324,10 +324,6 @@ input[type="text"]:focus {
     left: 0;
 }
 
-.navigation-distance {
-    text-align: center;
-}
-
 @media screen and (min-width: 375px) {
     .point-form-trigger {
         height: 35px;

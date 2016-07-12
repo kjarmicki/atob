@@ -85,7 +85,10 @@ export default class NavigationPage extends React.Component {
 
     render() {
         const distance = (this.state.navigatingToPoint && this.state.currentPositionPoint) ?
-            <div className="cell navigation-distance">Distance: {this.state.currentPositionPoint.distanceFrom(this.state.navigatingToPoint)} meters</div> :
+            <div className="navigation-distance">
+                <div className="cell">Distance: {this.state.currentPositionPoint.distanceFrom(this.state.navigatingToPoint)} meters</div>
+                <div className="cell">GPS accuracy: {this.state.currentPositionPoint.getAccuracy()} meters</div>
+            </div> :
             <div className="cell navigation-distance">Not navigating currently</div>;
 
         return(

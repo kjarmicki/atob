@@ -9,7 +9,7 @@ export default function browserGeolocationProvider(window) {
         return new Promise((resolve, reject) => {
             window.navigator.geolocation.getCurrentPosition(
                 position => {
-                    resolve(convertToLatLng(position.coords));
+                    resolve(pluck(position.coords));
                 },
                 err => {
                     reject(new Error('Could not get GPS data'));
@@ -24,7 +24,7 @@ export default function browserGeolocationProvider(window) {
         if(watchId) throw new Error('geolocation is already being watched');
         watchId = window.navigator.geolocation.watchPosition(
             position => {
-                whenAvailable(convertToLatLng(position.coords));
+                whenAvailable(pluck(position.coords));
             },
             err => {
                 console.error(err);
@@ -41,8 +41,8 @@ export default function browserGeolocationProvider(window) {
         }
     }
 
-    function convertToLatLng({latitude, longitude}) {
-        return {latitude, longitude};
+    function pluck({latitude, longitude, accuracy}) {
+        return {latitude, longitude, accuracy};
     }
 
     return {getCoordinates, watchCoordinates, stopWatchingCoordinates};
