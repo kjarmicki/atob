@@ -12,14 +12,21 @@ export default class Main extends React.Component {
             selected: 'points',
             transitionProgress: 'ended'
         };
+        this.props.events.on('point.choose', () => this.select('navigation'));
+        this.props.events.on('point.disregard', () => this.select('points'));
     }
-    select(e) {
+    selectOnClick(e) {
         e.preventDefault();
         const id = e.target.dataset.id;
-        this.setState({
-            selected: id,
-            transitionProgress: 'running'
-        });
+        this.select(id);
+    }
+    select(id) {
+        if(this.state.selected !== id) {
+            this.setState({
+                selected: id,
+                transitionProgress: 'running'
+            });
+        }
     }
     pageTransitionEnd(e) {
         this.setState({
@@ -36,7 +43,7 @@ export default class Main extends React.Component {
         const menuItems = this.state.menuItems.map(item => {
             return(
                 <li key={item} className="main-menu-item">
-                    <a onClick={this.select.bind(this)}
+                    <a onClick={this.selectOnClick.bind(this)}
                        className={this.state.selected === item ? "active" : "" } data-id={item} href="#">{item}</a>
                 </li>
             );

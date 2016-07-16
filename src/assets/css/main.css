@@ -226,6 +226,14 @@ button {
     border-radius: 6px;
 }
 
+.btn-standalone {
+    width: 85%;
+    min-height: 35px;
+    line-height: 22px;
+    font-size: 0.9em;
+    padding: 10px 0;
+}
+
 input[type="text"] {
     border: 1px solid #aaa;
     padding: 4px;
@@ -239,12 +247,11 @@ input[type="text"]:focus {
 }
 
 .point-form-trigger {
-    width: 85%;
     margin: 35px auto 10px;
-    min-height: 35px;
-    line-height: 22px;
-    font-size: 0.9em;
-    padding: 10px 0;
+}
+
+.navigation-point-disregard {
+    margin: 15px auto 10px;
 }
 
 .point-form-overlay {

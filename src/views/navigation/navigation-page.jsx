@@ -68,6 +68,11 @@ export default class NavigationPage extends React.Component {
         });
     }
 
+    pointDisregard(e) {
+        e && e.preventDefault();
+        this.props.events.emit('point.disregard', this.state.navigatingToPoint);
+    }
+
     updateLoop() {
         let loop;
         raf(loop = () => {
@@ -86,8 +91,11 @@ export default class NavigationPage extends React.Component {
     render() {
         const distance = (this.state.navigatingToPoint && this.state.currentPositionPoint) ?
             <div className="navigation-distance">
-                <div className="cell">Distance: {this.state.currentPositionPoint.distanceFrom(this.state.navigatingToPoint)} meters</div>
+                <div className="cell">
+                    <strong>{this.state.navigatingToPoint.getName()}</strong> distance: {this.state.currentPositionPoint.distanceFrom(this.state.navigatingToPoint)} meters
+                </div>
                 <div className="cell">GPS accuracy: {this.state.currentPositionPoint.getAccuracy()} meters</div>
+                <button className="btn btn-standalone navigation-point-disregard" onClick={this.pointDisregard.bind(this)}>Stop navigating</button>
             </div> :
             <div className="cell navigation-distance">Not navigating currently</div>;
 

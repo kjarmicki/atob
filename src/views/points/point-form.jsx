@@ -90,7 +90,7 @@ export default class PointForm extends React.Component {
         ].join(' ');
         return(
             <div className={pointFormWrapperClassNames}>
-                <button className="btn point-form-trigger" onClick={this.showForm.bind(this)}>Add a new point at current location</button>
+                <button className="btn btn-standalone point-form-trigger" onClick={this.showForm.bind(this)}>Add a new point at current location</button>
                 <div className="point-form-overlay">
                     <form autoComplete="off" className={pointFormClassNames} onSubmit={this.submitPoint.bind(this)}>
                         <div className="point-form-inputs">
