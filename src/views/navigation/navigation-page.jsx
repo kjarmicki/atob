@@ -89,15 +89,17 @@ export default class NavigationPage extends React.Component {
     }
 
     render() {
-        const distance = (this.state.navigatingToPoint && this.state.currentPositionPoint) ?
-            <div className="navigation-distance">
-                <div className="cell">
-                    <strong>{this.state.navigatingToPoint.getName()}</strong> distance: {this.state.currentPositionPoint.distanceFrom(this.state.navigatingToPoint)} meters
-                </div>
-                <div className="cell">GPS accuracy: {this.state.currentPositionPoint.getAccuracy()} meters</div>
-                <button className="btn btn-standalone navigation-point-disregard" onClick={this.pointDisregard.bind(this)}>Stop navigating</button>
-            </div> :
-            <div className="cell navigation-distance">Not navigating currently</div>;
+        const hud = (this.state.navigatingToPoint && this.state.currentPositionPoint) ?
+                <div className="navigation-hud">
+                    <div className="cell">
+                        <strong>{this.state.navigatingToPoint.getName()}</strong> distance: {this.state.currentPositionPoint.distanceFrom(this.state.navigatingToPoint)} meters
+                    </div>
+                    <div className="cell">GPS accuracy: {this.state.currentPositionPoint.getAccuracy()} meters</div>
+                    <button className="btn btn-standalone navigation-point-disregard" onClick={this.pointDisregard.bind(this)}>Stop navigating</button>
+                </div> :
+            this.state.shouldBeUpdating ?
+                <div className="cell navigation-hud">Waiting for the GPS...</div> :
+                <div className="cell navigation-hud">Not navigating currently</div>;
 
         return(
             <div className="navigation-page">
@@ -108,7 +110,7 @@ export default class NavigationPage extends React.Component {
                     navigatingToPoint={this.state.navigatingToPoint}
                     currentPositionPoint={this.state.currentPositionPoint}
                 />
-                {distance}
+                {hud}
             </div>
         );
     }
