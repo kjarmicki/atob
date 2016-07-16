@@ -18,6 +18,10 @@ document.addEventListener('deviceready', () => {
     const orientationProvider = browserOrientationProvider(window);
     const events = new EventEmitter();
 
+    // kick off the GPS and refresh it upon app resume
+    geolocationProvider.getCoordinates();
+    document.addEventListener('resume', geolocationProvider.getCoordinates);
+
     FastClick.attach(document.body);
 
     ReactDOM.render(
