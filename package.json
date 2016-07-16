@@ -7,6 +7,7 @@
     "postinstall": "npm install -g cordova",
     "cordova:create": "cordova create dist/cordova com.github.kjarmicki AtoB",
     "cordova:platform:android": "cd dist/cordova && cordova platform add android@4.0.2 --save",
+    "cordova:config": "node src/wrappers/cordova/config-decorator.js",
     "cordova:move": "cp dist/browser/index.html dist/cordova/www/. && cp dist/browser/js/bundle.js dist/cordova/www/js/.",
     "cordova:plugins": "cd dist/cordova && cordova plugin add cordova-plugin-geolocation",
     "cordova:build": "cd dist/cordova && cordova build --device",
@@ -14,9 +15,13 @@
     "test": "tape -r babel-register 'test/**/*-test.js' | tap-spec",
     "build": "npm run clean && webpack",
     "dev": "google-chrome https://localhost:8080 && webpack-dev-server --host 0.0.0.0 --https",
-    "cordova": "npm run build && npm run cordova:create && npm run cordova:platform:android && npm run cordova:plugins && npm run cordova:move && npm run cordova:build"
+    "cordova": "npm run build && npm run cordova:create && npm run cordova:platform:android && npm run cordova:config && npm run cordova:plugins && npm run cordova:move && npm run cordova:build"
   },
-  "author": "Krystian Jarmicki",
+  "author": {
+    "name": "Krystian Jarmicki",
+    "email": "jarmicki@gmail.com",
+    "url": "https://github.com/kjarmicki"
+  },
   "license": "ISC",
   "dependencies": {
     "babel-core": "6.9.1",
@@ -34,7 +39,8 @@
     "react": "15.1.0",
     "react-dom": "15.1.0",
     "style-loader": "0.13.1",
-    "webpack": "1.13.1"
+    "webpack": "1.13.1",
+    "xml2js": "0.4.17"
   },
   "devDependencies": {
     "babel-register": "6.9.0",

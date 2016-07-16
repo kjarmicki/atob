@@ -6,7 +6,7 @@ module.exports = {
     context: __dirname,
     entry: {
         'js/bundle': './src/app',
-        'cordova': './src/wrappers/cordova'
+        'cordova': './src/wrappers/cordova/cordova'
     },
     output: {
         path: __dirname + '/dist/browser',
