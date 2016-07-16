@@ -38,7 +38,7 @@ export default class Point extends React.Component {
                 </div>
                 <div className="point-details">
                     <p className="point-detail">Accuracy: {p.accuracy} meters</p>
-                    <p className="point-detail">Created at: {createdAt.format('DD.MM.YY, HH:mm')}</p>
+                    <p className="point-detail">Created at: {createdAt.format('DD.MM.YYYY, HH:mm')}</p>
                 </div>
             </li>
         )

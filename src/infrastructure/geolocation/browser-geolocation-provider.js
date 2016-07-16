@@ -42,6 +42,7 @@ export default function browserGeolocationProvider(window) {
     }
 
     function pluck({latitude, longitude, accuracy}) {
+        accuracy = Math.round(accuracy);
         return {latitude, longitude, accuracy};
     }
 
