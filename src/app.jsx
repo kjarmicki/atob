@@ -36,6 +36,7 @@ document.addEventListener('deviceready', () => {
             geolocationProvider={geolocationProvider}
             orientationProvider={orientationProvider}
             events={events}
+            clock={clock}
             />,
         document.querySelector('#main')
     );

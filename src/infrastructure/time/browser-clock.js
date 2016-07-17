@@ -7,4 +7,5 @@ export default function browserClock(window) {
     function clearTimeout(id) {
         return window.clearTimeout(id);
     }
+    return {timeout, clearTimeout};
 }

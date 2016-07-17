@@ -9,11 +9,17 @@ export default class Main extends React.Component {
         super(props);
         this.state = {
             menuItems: ['points', 'navigation'],
-            selected: 'points',
+            selected: null,
             transitionProgress: 'ended'
         };
         this.props.events.on('point.choose', () => this.select('navigation'));
         this.props.events.on('point.disregard', () => this.select('points'));
+    }
+    componentDidMount() {
+        this.props.pointRepository.retrieveChosen()
+            .then(chosenPoint => {
+                this.setState({selected: chosenPoint ? 'navigation' : 'points'});
+            });
     }
     selectOnClick(e) {
         e.preventDefault();
@@ -34,6 +40,8 @@ export default class Main extends React.Component {
         });
     }
     render() {
+        if(!this.state.selected) return null;
+
         const pagesClassNames = ['pages',
             `page-selected-${this.state.selected}`
         ].join(' ');
