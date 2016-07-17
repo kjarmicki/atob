@@ -27,6 +27,8 @@ export default class PointForm extends React.Component {
             formVisible: true
         });
         this.input.focus();
+        // kick off gps update early
+        this.props.geolocationProvider.getCoordinates();
     }
 
     hideForm(e) {
