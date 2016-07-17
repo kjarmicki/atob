@@ -1,6 +1,8 @@
 'use strict';
 
 import tape from 'tape';
+import controllableClock from '../../mocks/controllable-clock';
+import eventedDomElement from '../../mocks/evented-dom-element';
 import browserGeolocationProvider from '../../../src/infrastructure/geolocation/browser-geolocation-provider';
 
 tape('browser geolocation provider should correctly report availability', t => {
@@ -29,12 +31,20 @@ tape('browser geolocation provider should correctly report unavailability', t =>
 
 tape('browser geolocation provider should be able to provide location', t => {
     // given
+    const clock = controllableClock();
     const window = {
-        navigator: { geolocation: { getCurrentPosition(success, error) {
-            setTimeout(() => { success({
-                coords: { latitude: 1, longitude: 2, accuracy: 3 }
-            }); }, 50);
-        } } }
+        document: eventedDomElement(),
+        navigator: {
+            geolocation: {
+                getCurrentPosition(success, error) {
+                    clock.timeout(50, () => {
+                        success({
+                            coords: { latitude: 1, longitude: 2, accuracy: 3 }
+                        });
+                    });
+                }
+            }
+        }
     };
 
     // when
@@ -46,25 +56,32 @@ tape('browser geolocation provider should be able to provide location', t => {
             t.deepEqual(coordinates, { latitude: 1, longitude: 2, accuracy: 3 });
             t.end();
         });
+
+    clock.tick(50);
 });
 
-tape('polled promise function should return correct results', t => {
+tape('browser geolocation provider should be able to watch location', t => {
     // given
+    const clock = controllableClock();
     let latitude, longitude, accuracy;
     latitude = longitude = accuracy = 0;
 
     const window = {
-        navigator: { geolocation: {
-            _id: null,
-            watchPosition(success, error) {
-                this._id = setTimeout(() => { success({
-                    coords: { latitude: latitude++, longitude: longitude++, accuracy: accuracy++ }
-                }); this.watchPosition(success, error) }, 40);
-            },
-            clearWatch() {
-                clearTimeout(this._id);
+        document: eventedDomElement(),
+        navigator: {
+            geolocation: {
+                watchPosition(success, error) {
+                    clock.timeout(40, () => {
+                        success({
+                            coords: { latitude: latitude++, longitude: longitude++, accuracy: accuracy++ }
+                        });
+                        this.watchPosition(success, error)
+                    });
+                },
+                clearWatch() {
+                }
             }
-        } }
+        }
     };
 
     // when
@@ -75,17 +92,14 @@ tape('polled promise function should return correct results', t => {
     });
 
     // then
-    setTimeout(() => {
-        t.equal(result, null, 'result not obtained yet');
-    }, 20);
+    clock.tick(20);
+    t.equal(result, null, 'result not obtained yet');
 
-    setTimeout(() => {
-        t.deepEqual(result, {latitude: 0, longitude: 0, accuracy: 0}, 'result obtained for the first time');
-    }, 60);
+    clock.tick(60);
+    t.deepEqual(result, {latitude: 0, longitude: 0, accuracy: 0}, 'result obtained for the first time');
 
-    setTimeout(() => {
-        t.deepEqual(result, {latitude: 1, longitude: 1, accuracy: 1}, 'result obtained for the second time');
-        bgp.stopWatchingCoordinates();
-        t.end();
-    }, 100);
+    clock.tick(100);
+    t.deepEqual(result, {latitude: 1, longitude: 1, accuracy: 1}, 'result obtained for the second time');
+    bgp.stopWatchingCoordinates();
+    t.end();
 });
