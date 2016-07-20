@@ -16,6 +16,7 @@ export default class NavigationPage extends React.Component {
             currentPositionPoint: null,
             alphaRotation: 0,
             shouldBeUpdating: false,
+            watchId: null,
             // stateful components
             geolocationProvider: this.props.geolocationProvider,
             orientationProvider: this.props.orientationProvider
@@ -40,14 +41,17 @@ export default class NavigationPage extends React.Component {
 
     startNavigatingTo(destinationPoint) {
         if(!this.state.shouldBeUpdating) {
-            this.setState({shouldBeUpdating: true});
-            this.state.geolocationProvider.watchCoordinates(currentCoordinates => {
+            const watchId = this.state.geolocationProvider.watchCoordinates(currentCoordinates => {
                 const currentPoint = pointModel(assign(currentCoordinates, {
                     name: 'current'
                 }));
                 this.setTemporaryState({
                     currentPositionPoint: currentPoint
                 });
+            });
+            this.setState({
+                shouldBeUpdating: true,
+                watchId: watchId
             });
             this.state.orientationProvider.startPolling();
             this.updateLoop();
@@ -58,13 +62,14 @@ export default class NavigationPage extends React.Component {
     }
 
     stopNavigating() {
-        this.state.geolocationProvider.stopWatchingCoordinates();
+        this.state.geolocationProvider.stopWatchingCoordinates(this.state.watchId);
         this.state.orientationProvider.stopPolling();
         this.setState({
             navigatingToPoint: null,
             currentPositionPoint: null,
             alphaRotation: 0,
-            shouldBeUpdating: false
+            shouldBeUpdating: false,
+            watchId: null
         });
     }
 
