@@ -15,15 +15,15 @@ import cordovaPauseWatcher from './wrappers/cordova/pause-watcher';
 import './assets/assets';
 
 document.addEventListener('deviceready', () => {
-    const pointRepository = storagePointRepository(localStorage);
-    const geolocationProvider = browserGeolocationProvider(window);
-    const orientationProvider = browserOrientationProvider(window);
     const clock = browserClock(window);
+    const pointRepository = storagePointRepository(localStorage);
+    const geolocationProvider = browserGeolocationProvider(window, clock);
+    const orientationProvider = browserOrientationProvider(window);
     const pauseWatcher = cordovaPauseWatcher(window, clock, 1000 * 60 * 5);
     const events = new EventEmitter();
 
-    // kick off the GPS and refresh it upon app resume
-    geolocationProvider.getCoordinates();
+    // kick off the GPS for 10 seconds
+    geolocationProvider.watchCoordinatesForSeconds(10);
 
     // be kind to a phone battery and kill the app if it's unused
     pauseWatcher.startWatching();

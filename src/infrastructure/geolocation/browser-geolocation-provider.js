@@ -2,7 +2,7 @@
 
 import Promise from 'bluebird';
 
-export default function browserGeolocationProvider(window) {
+export default function browserGeolocationProvider(window, clock) {
 
     function getCoordinates() {
         return new Promise((resolve, reject) => {
@@ -38,12 +38,19 @@ export default function browserGeolocationProvider(window) {
         }
     }
 
+    function watchCoordinatesForSeconds(seconds) {
+        const watchId = watchCoordinates();
+        clock.timeout(seconds * 1000, () => {
+            stopWatchingCoordinates(watchId);
+        });
+    }
+
     function pluck({latitude, longitude, accuracy}) {
         accuracy = Math.round(accuracy);
         return {latitude, longitude, accuracy};
     }
 
-    return {getCoordinates, watchCoordinates, stopWatchingCoordinates};
+    return {getCoordinates, watchCoordinates, watchCoordinatesForSeconds, stopWatchingCoordinates};
 }
 
 browserGeolocationProvider.isAvailable = function(window) {
