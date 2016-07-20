@@ -55,7 +55,8 @@ export default class PointForm extends React.Component {
             .then(coordinates => this.storePoint(name, coordinates))
             .then(() => {
                 this.setState({
-                    name: ''
+                    name: '',
+                    message: ''
                 });
                 this.props.events.emit('point.add');
                 this.hideForm();
