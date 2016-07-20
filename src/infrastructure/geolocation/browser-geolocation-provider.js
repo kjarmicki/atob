@@ -22,7 +22,7 @@ export default function browserGeolocationProvider(window) {
     function watchCoordinates(whenAvailable) {
         return window.navigator.geolocation.watchPosition(
             position => {
-                whenAvailable(pluck(position.coords));
+                whenAvailable && whenAvailable(pluck(position.coords));
             },
             err => {
                 console.error(err);

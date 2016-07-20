@@ -10,6 +10,7 @@ export default class PointForm extends React.Component {
         this.state = {
             name: '',
             message: '',
+            watchId: null,
             formVisible: false
         };
         this.input = null;
@@ -23,18 +24,20 @@ export default class PointForm extends React.Component {
 
     showForm(e) {
         e && e.preventDefault();
-        this.setState({
-            formVisible: true
-        });
         this.input.focus();
-        // kick off gps update early
-        this.props.geolocationProvider.getCoordinates();
+        this.setState({
+            formVisible: true,
+            // kick off gps update cycle
+            watchId: this.props.geolocationProvider.watchCoordinates()
+        });
     }
 
     hideForm(e) {
         e && e.preventDefault();
+        this.props.geolocationProvider.stopWatchingCoordinates(this.state.watchId);
         this.setState({
-            formVisible: false
+            formVisible: false,
+            watchId: null
         });
     }
 
@@ -43,6 +46,11 @@ export default class PointForm extends React.Component {
         const name = this.state.name.trim();
 
         return this.validatePoint({name})
+            .then(() => {
+                this.setState({
+                    message: 'Waiting for the GPS...'
+                });
+            })
             .then(() => this.props.geolocationProvider.getCoordinates())
             .then(coordinates => this.storePoint(name, coordinates))
             .then(() => {
