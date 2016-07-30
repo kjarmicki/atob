@@ -259,9 +259,7 @@ input[type="text"]:focus {
     top: -1000px;
     left: 0;
     width: 100%;
-    height: 100vh;
-    display: flex;
-    align-items: center;
+    height: 100%; /* will be overridden */
     background-color: rgba(0,0,0,0);
 
     -webkit-transition: background-color 1.5s;
@@ -275,8 +273,9 @@ input[type="text"]:focus {
 
 .point-form {
     box-sizing: border-box;
+    position: relative;
     width: 85%;
-    padding: 0 15px;
+    padding: 0 5px;
     margin: -1000px auto 0;
     height: 70px;
     background: #eee;
@@ -289,10 +288,9 @@ input[type="text"]:focus {
 }
 
 .point-form-inputs {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     height: 70px;
+    line-height: 70px;
+    text-align: center;
 
     -webkit-transition: height 0.2s;
     transition: height 0.2s;
@@ -300,6 +298,7 @@ input[type="text"]:focus {
 
 .point-form-message {
     height: 0;
+    text-align: center;
 
     -webkit-transition: height 0.2s;
     transition: height 0.2s;
@@ -307,6 +306,7 @@ input[type="text"]:focus {
 
 .message-visible .point-form-inputs {
     height: 35px;
+    line-height: 35px;
 }
 
 .message-visible .point-form-message {
@@ -316,12 +316,14 @@ input[type="text"]:focus {
 }
 
 .point-form-visible .point-form {
-    margin-top: 0;
+    top: 50%;
+    margin-top: -35px;
 }
 
 .new-point-name {
-    max-width: 50%;
+    max-width: 40%;
     width: 300px;
+    display: inline-block;
 }
 
 .point-form input[type="submit"], .point-form-cancel {
@@ -329,6 +331,9 @@ input[type="text"]:focus {
     height: 25px;
     margin-left: 6px;
     line-height: 25px;
+    display: inline-block;
+    position: relative;
+    top: 2px;
 }
 
 .navigation-box {
