@@ -2,6 +2,7 @@
 
 import React from 'react';
 import assign from 'object-assign';
+import Promise from 'bluebird';
 import pointModel from '../../model/point';
 
 export default class PointForm extends React.Component {
