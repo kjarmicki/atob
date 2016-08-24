@@ -37,7 +37,7 @@ tape('browser orientation provider should be able to poll current orientation', 
     });
 
     // then
-    t.equal(bop.getAlpha(), 2);
+    t.equal(bop.getHeading(), -2);
     bop.stopPolling();
     t.end();
 });

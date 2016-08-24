@@ -82,7 +82,7 @@ export default class NavigationPage extends React.Component {
         let loop;
         raf(loop = () => {
             if(this.state.shouldBeUpdating) {
-                const alphaRotation = this.state.orientationProvider.getAlpha();
+                const alphaRotation = this.state.orientationProvider.getHeading();
                 this.setState(assign({}, this.temporaryState, {alphaRotation}));
                 raf(loop);
             }

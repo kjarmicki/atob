@@ -13,14 +13,14 @@ export default function browserOrientationProvider(window) {
     }
 
     function update(e) {
-        alpha = (typeof e.alpha === 'number') ? e.alpha : alpha;
+        alpha = (typeof e.alpha === 'number') ? e.alpha * -1 : alpha;
     }
 
-    function getAlpha() {
+    function getHeading() {
         return alpha;
     }
 
-    return {startPolling, stopPolling, getAlpha};
+    return {startPolling, stopPolling, getHeading};
 }
 
 browserOrientationProvider.isAvailable = function(window) {

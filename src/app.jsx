@@ -8,7 +8,7 @@ import Main from './views/main';
 
 import storagePointRepository from './repository/storage-point-repository';
 import browserGeolocationProvider from './infrastructure/geolocation/browser-geolocation-provider';
-import browserOrientationProvider from './infrastructure/orientation/browser-orientation-provider';
+import orientationResolver from './infrastructure/orientation/orientation-resolver';
 import browserClock from './infrastructure/time/browser-clock';
 import cordovaPauseWatcher from './wrappers/cordova/pause-watcher';
 
@@ -18,7 +18,7 @@ document.addEventListener('deviceready', () => {
     const clock = browserClock(window);
     const pointRepository = storagePointRepository(localStorage);
     const geolocationProvider = browserGeolocationProvider(window, clock);
-    const orientationProvider = browserOrientationProvider(window);
+    const orientationProvider = orientationResolver(window);
     const pauseWatcher = cordovaPauseWatcher(window, clock, 1000 * 60 * 5);
     const events = new EventEmitter();
 
@@ -41,4 +41,3 @@ document.addEventListener('deviceready', () => {
         document.querySelector('#main')
     );
 });
-
