@@ -13,7 +13,9 @@ export default class Main extends React.Component {
             transitionProgress: 'ended'
         };
         this.props.events.on('point.choose', () => this.select('navigation'));
+        this.props.events.on('point.choose', () => this.preventScreenSleep());
         this.props.events.on('point.disregard', () => this.select('points'));
+        this.props.events.on('point.disregard', () => this.allowScreenSleep())
     }
     componentDidMount() {
         this.props.pointRepository.retrieveChosen()
@@ -33,6 +35,12 @@ export default class Main extends React.Component {
                 transitionProgress: 'running'
             });
         }
+    }
+    preventScreenSleep() {
+        this.props.insomnia.keepAwake();
+    }
+    allowScreenSleep() {
+        this.props.insomnia.allowSleepAgain();
     }
     pageTransitionEnd(e) {
         this.setState({

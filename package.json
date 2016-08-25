@@ -9,7 +9,7 @@
     "cordova:platform:android": "cd dist/cordova && cordova platform add android@4.0.2 --save",
     "cordova:config": "node src/wrappers/cordova/config-decorator.js",
     "cordova:move": "cp dist/browser/index.html dist/cordova/www/. && cp dist/browser/js/bundle.js dist/cordova/www/js/.",
-    "cordova:plugins": "cd dist/cordova && cordova plugin add cordova-plugin-geolocation && cordova plugin add cordova-plugin-device-orientation",
+    "cordova:plugins": "cd dist/cordova && cordova plugin add cordova-plugin-geolocation && cordova plugin add cordova-plugin-device-orientation && cordova plugin add https://github.com/EddyVerbruggen/Insomnia-PhoneGap-Plugin.git && cordova prepare",
     "cordova:build": "cd dist/cordova && cordova build --device",
     "clean": "rm -rf dist",
     "test": "tape -r babel-register 'test/**/*-test.js' | tap-spec",

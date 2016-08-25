@@ -21,6 +21,7 @@ document.addEventListener('deviceready', () => {
     const orientationProvider = orientationResolver(window);
     const pauseWatcher = cordovaPauseWatcher(window, clock, 1000 * 60 * 5);
     const events = new EventEmitter();
+    const insomnia = window.plugins.insomnia;
 
     // kick off the GPS for 10 seconds
     geolocationProvider.watchCoordinatesForSeconds(10);
@@ -37,6 +38,7 @@ document.addEventListener('deviceready', () => {
             orientationProvider={orientationProvider}
             events={events}
             clock={clock}
+            insomnia={insomnia}
             />,
         document.querySelector('#main')
     );
