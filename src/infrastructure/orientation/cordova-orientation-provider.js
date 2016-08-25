@@ -8,7 +8,10 @@ export default function cordovaOrientationProvider(window) {
         if(watchId !== null) return;
         watchId = window.navigator.compass.watchHeading(
             update,
-            e => alert(e)
+            e => alert(e),
+            {
+                frequency: 1000 / 60 // aim for 60fps
+            }
         )
     }
 
