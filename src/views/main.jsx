@@ -20,6 +20,7 @@ export default class Main extends React.Component {
     componentDidMount() {
         this.props.pointRepository.retrieveChosen()
             .then(chosenPoint => {
+                if(chosenPoint) this.preventScreenSleep();
                 this.setState({selected: chosenPoint ? 'navigation' : 'points'});
             });
     }
