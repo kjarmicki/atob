@@ -11,8 +11,8 @@ Apache Cordova to wrap webapp code into hybrid app, Node + Babel + Webpack to bu
 
 ### Conclusions
 As this is a hobby project made for educational purposes, here are some afterthoughts:
-* accelerometer-as-a-compass is unreliable, and gets worse on cheap devices
 * React is cool and easy to start with
 * so is Apache Cordova for Android
-* Webpack is rather heavy and clumsy
+* Cordova's `navigator.compass` plugin works way better than `window.ondeviceorientation` as a compass (duh.)
+* Webpack is a bit too magical for my taste
 * Mocha > Tape for testing, main pain points being: awkward nesting, repeatable requiring and ending tests, lack of output formatter that can both hide passed tests and log errors with stack trace
