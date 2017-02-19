@@ -1,5 +1,3 @@
-'use strict';
-
 import tape from 'tape'
 import mockEventedDomElement from '../../mocks/evented-dom-element';
 import browserOrientationProvider from '../../../src/infrastructure/orientation/browser-orientation-provider';

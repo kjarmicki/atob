@@ -1,5 +1,3 @@
-'use strict';
-
 import tape from 'tape';
 import controllableClock from '../../mocks/controllable-clock';
 import eventedDomElement from '../../mocks/evented-dom-element';

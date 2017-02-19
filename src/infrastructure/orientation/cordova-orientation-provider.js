@@ -1,5 +1,3 @@
-'use strict';
-
 export default function cordovaOrientationProvider(window) {
     let heading = 0;
     let watchId = null;

@@ -1,5 +1,3 @@
-'use strict';
-
 /* cordova api mock for regular browsers */
 
 window.addEventListener('load', () => {

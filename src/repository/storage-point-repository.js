@@ -1,5 +1,3 @@
-'use strict';
-
 import Promise from 'bluebird';
 import pointModel from '../model/point';
 

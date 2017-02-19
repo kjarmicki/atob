@@ -1,5 +1,3 @@
-'use strict';
-
 import tape from 'tape';
 import cordovaOrientationProvider from '../../../src/infrastructure/orientation/cordova-orientation-provider';
 

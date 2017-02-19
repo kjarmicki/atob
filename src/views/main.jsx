@@ -1,5 +1,3 @@
-'use strict';
-
 import React from 'react';
 import PointsPage from './points/points-page';
 import NavigationPage from './navigation/navigation-page';

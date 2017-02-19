@@ -1,5 +1,3 @@
-'use strict';
-
 import browserOrientationProvider from './browser-orientation-provider';
 import cordovaOrientationProvider from './cordova-orientation-provider';
 

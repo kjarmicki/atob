@@ -1,5 +1,3 @@
-'use strict';
-
 export default function canvasRenderer(ctx, specs) {
     function clear() {
         ctx.fillStyle = specs.backgroundColor;

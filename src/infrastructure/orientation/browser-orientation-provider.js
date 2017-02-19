@@ -1,5 +1,3 @@
-'use strict';
-
 export default function browserOrientationProvider(window) {
     const EVENT_NAME = 'deviceorientation';
     let alpha = 0;

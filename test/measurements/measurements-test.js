@@ -1,5 +1,3 @@
-'use strict';
-
 import tape from 'tape';
 import measurements from '../../src/measurements/measurements'
 

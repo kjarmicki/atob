@@ -1,5 +1,3 @@
-'use strict';
-
 // not using babel here because babel-cli doesn't support es6 modules anyway
 const fs = require('fs');
 const xml2js = require('xml2js');

@@ -1,5 +1,3 @@
-'use strict';
-
 import events from 'events';
 
 class Element extends events.EventEmitter {

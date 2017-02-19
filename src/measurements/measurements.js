@@ -1,5 +1,3 @@
-'use strict';
-
 import assign from 'object-assign';
 
 export default {coordsToPx, scalePointsToQuadraticArea, transformPointsMatrix, rotatePointsMatrix};

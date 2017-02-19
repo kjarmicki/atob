@@ -1,5 +1,3 @@
-'use strict';
-
 import tape from 'tape';
 import makeStorage from './../mocks/storage';
 import storagePointRepository from '../../src/repository/storage-point-repository';

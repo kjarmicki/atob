@@ -1,5 +1,3 @@
-'use strict';
-
 export default function makeStorage() {
     const db = {};
 

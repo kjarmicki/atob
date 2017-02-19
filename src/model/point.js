@@ -1,5 +1,3 @@
-'use strict';
-
 import geolib from 'geolib';
 
 /*

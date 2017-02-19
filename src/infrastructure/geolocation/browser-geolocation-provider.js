@@ -1,5 +1,3 @@
-'use strict';
-
 import Promise from 'bluebird';
 
 export default function browserGeolocationProvider(window, clock) {

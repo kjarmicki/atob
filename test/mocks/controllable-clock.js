@@ -1,5 +1,3 @@
-'use strict';
-
 export default function controllableClock() {
     let timeouts = [];
     let id = 1;

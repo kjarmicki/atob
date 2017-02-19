@@ -1,5 +1,3 @@
-'use strict';
-
 export default function(window, clock, waitTime) {
     let timeoutId = null;
 
