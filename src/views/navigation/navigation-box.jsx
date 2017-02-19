@@ -1,9 +1,12 @@
 import React from 'react';
 import assign from 'object-assign';
+import autobind from '../../util/autobind';
 
 export default class NavigationBox extends React.Component {
     constructor(props) {
         super(props);
+        autobind(this);
+
         const win = props.window || window;
         const dimension = window.innerWidth;
         this.state = {

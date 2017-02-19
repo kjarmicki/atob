@@ -1,19 +1,22 @@
 import React from 'react';
+import autobind from '../util/autobind';
 import PointsPage from './points/points-page';
 import NavigationPage from './navigation/navigation-page';
 
 export default class Main extends React.Component {
     constructor(props) {
         super(props);
+        autobind(this);
+
         this.state = {
             menuItems: ['points', 'navigation'],
             selected: null,
             transitionProgress: 'ended'
         };
         this.props.events.on('point.choose', () => this.select('navigation'));
-        this.props.events.on('point.choose', () => this.preventScreenSleep());
+        this.props.events.on('point.choose', this.preventScreenSleep);
         this.props.events.on('point.disregard', () => this.select('points'));
-        this.props.events.on('point.disregard', () => this.allowScreenSleep())
+        this.props.events.on('point.disregard', this.allowScreenSleep)
     }
     componentDidMount() {
         this.props.pointRepository.retrieveChosen()
@@ -58,7 +61,7 @@ export default class Main extends React.Component {
         const menuItems = this.state.menuItems.map(item => {
             return(
                 <li key={item} className="main-menu-item">
-                    <a onClick={this.selectOnClick.bind(this)}
+                    <a onClick={this.selectOnClick}
                        className={this.state.selected === item ? "active" : "" } data-id={item} href="#">{item}</a>
                 </li>
             );
@@ -72,7 +75,7 @@ export default class Main extends React.Component {
                         </ul>
                     </nav>
                 </header>
-                <div onTransitionEnd={this.pageTransitionEnd.bind(this)} className={pagesClassNames}>
+                <div onTransitionEnd={this.pageTransitionEnd} className={pagesClassNames}>
                     <PointsPage
                         pointRepository={this.props.pointRepository}
                         geolocationProvider={this.props.geolocationProvider}

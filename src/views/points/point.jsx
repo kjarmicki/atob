@@ -1,7 +1,12 @@
 import React from 'react';
 import moment from 'moment';
+import autobind from '../../util/autobind';
 
 export default class Point extends React.Component {
+    constructor(props) {
+        super(props);
+        autobind(this);
+    }
     remove() {
         window.confirm(`Are you sure you want to remove point ${this.props.model.getName()}?`)
         && this.props.events.emit('point.remove', this.props.model);
@@ -15,8 +20,8 @@ export default class Point extends React.Component {
     render() {
         const p = this.props.model.serialize();
         const navigationAction = p.chosenForNavigation ?
-            this.disregard.bind(this) :
-            this.choose.bind(this);
+            this.disregard :
+            this.choose;
         const createdAt = moment(p.createdAt);
         const navigation = p.chosenForNavigation ?
             <button onClick={navigationAction}>stop navigating</button> :
@@ -31,7 +36,7 @@ export default class Point extends React.Component {
                     <h3 onClick={navigationAction}>{p.name}</h3>
                     <p className="point-controls">
                         {navigation}
-                        <button className="control-remove" onClick={this.remove.bind(this)}>remove</button>
+                        <button className="control-remove" onClick={this.remove}>remove</button>
                     </p>
                 </div>
                 <div className="point-details">

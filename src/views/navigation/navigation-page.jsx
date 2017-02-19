@@ -1,6 +1,7 @@
 import React from 'react';
 import assign from 'object-assign';
 import raf from 'raf';
+import autobind from '../../util/autobind';
 import NavigationBox from './navigation-box';
 import pointModel from '../../model/point';
 import canvasRenderer from '../../rendering/canvas';
@@ -9,6 +10,8 @@ import measurements from '../../measurements/measurements';
 export default class NavigationPage extends React.Component {
     constructor(props) {
         super(props);
+        autobind(this);
+
         this.state = {
             navigatingToPoint: null,
             currentPositionPoint: null,
@@ -98,7 +101,7 @@ export default class NavigationPage extends React.Component {
                         <strong>{this.state.navigatingToPoint.getName()}</strong> distance: {this.state.currentPositionPoint.distanceFrom(this.state.navigatingToPoint)} meters
                     </div>
                     <div className="cell">GPS accuracy: {this.state.currentPositionPoint.getAccuracy()} meters</div>
-                    <button className="btn btn-standalone navigation-point-disregard" onClick={this.pointDisregard.bind(this)}>Stop navigating</button>
+                    <button className="btn btn-standalone navigation-point-disregard" onClick={this.pointDisregard}>Stop navigating</button>
                 </div> :
             this.state.shouldBeUpdating ?
                 <div className="cell navigation-hud">Waiting for the GPS...</div> :

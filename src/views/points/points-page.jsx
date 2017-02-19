@@ -1,19 +1,21 @@
 import React from 'react';
 import Promise from 'bluebird';
+import autobind from '../../util/autobind';
 import Point from './point'
 import PointForm from './point-form'
 
 export default class PointsPage extends React.Component {
     constructor(props) {
         super(props);
+        autobind(this);
+
         this.state = {
             points: []
         };
-
-        this.props.events.on('point.add', () => this.updatePoints());
-        this.props.events.on('point.remove', point => this.removePoint(point));
-        this.props.events.on('point.choose', point => this.choosePoint(point));
-        this.props.events.on('point.disregard', point => this.disregardPoint(point));
+        this.props.events.on('point.add', this.updatePoints);
+        this.props.events.on('point.remove', this.removePoint);
+        this.props.events.on('point.choose', this.choosePoint);
+        this.props.events.on('point.disregard', this.disregardPoint);
     }
 
     componentDidMount() {
