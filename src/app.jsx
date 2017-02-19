@@ -1,9 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
 import FastClick from 'fastclick';
 import {EventEmitter} from 'events';
 import Main from './views/main';
 
+import rootReducer from './redux/reducers';
 import storagePointRepository from './repository/storage-point-repository';
 import browserGeolocationProvider from './infrastructure/geolocation/browser-geolocation-provider';
 import orientationResolver from './infrastructure/orientation/orientation-resolver';
@@ -17,6 +20,7 @@ document.addEventListener('deviceready', () => {
     const pointRepository = storagePointRepository(localStorage);
     const geolocationProvider = browserGeolocationProvider(window, clock);
     const orientationProvider = orientationResolver(window);
+    const store = createStore(rootReducer);
     const pauseWatcher = cordovaPauseWatcher(window, clock, 1000 * 60 * 5);
     const events = new EventEmitter();
     const insomnia = (window.plugins && window.plugins.insomnia) || {
@@ -33,14 +37,16 @@ document.addEventListener('deviceready', () => {
     FastClick.attach(document.body);
 
     ReactDOM.render(
-        <Main
-            pointRepository={pointRepository}
-            geolocationProvider={geolocationProvider}
-            orientationProvider={orientationProvider}
-            events={events}
-            clock={clock}
-            insomnia={insomnia}
-            />,
+        <Provider store={store}>
+            <Main
+                pointRepository={pointRepository}
+                geolocationProvider={geolocationProvider}
+                orientationProvider={orientationProvider}
+                events={events}
+                clock={clock}
+                insomnia={insomnia}
+            />
+        </Provider>,
         document.querySelector('#main')
     );
 });

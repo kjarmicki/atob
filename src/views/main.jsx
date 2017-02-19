@@ -1,18 +1,16 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { setState } from '../redux/action-creators';
 import autobind from '../util/autobind';
 import PointsPage from './points/points-page';
 import NavigationPage from './navigation/navigation-page';
 
-export default class Main extends React.Component {
+class Main extends React.Component {
     constructor(props) {
         super(props);
         autobind(this);
 
-        this.state = {
-            menuItems: ['points', 'navigation'],
-            selected: null,
-            transitionProgress: 'ended'
-        };
+        this.menuItems = ['points', 'navigation'];
         this.props.events.on('point.choose', () => this.select('navigation'));
         this.props.events.on('point.choose', this.preventScreenSleep);
         this.props.events.on('point.disregard', () => this.select('points'));
@@ -22,7 +20,7 @@ export default class Main extends React.Component {
         this.props.pointRepository.retrieveChosen()
             .then(chosenPoint => {
                 if(chosenPoint) this.preventScreenSleep();
-                this.setState({selected: chosenPoint ? 'navigation' : 'points'});
+                this.props.dispatch(setState({selectedTab: chosenPoint ? 'navigation' : 'points'}));
             });
     }
     selectOnClick(e) {
@@ -31,11 +29,11 @@ export default class Main extends React.Component {
         this.select(id);
     }
     select(id) {
-        if(this.state.selected !== id) {
-            this.setState({
-                selected: id,
+        if(this.props.selectedTab !== id) {
+            this.props.dispatch(setState({
+                selectedTab: id,
                 transitionProgress: 'running'
-            });
+            }));
         }
     }
     preventScreenSleep() {
@@ -45,24 +43,24 @@ export default class Main extends React.Component {
         this.props.insomnia.allowSleepAgain();
     }
     pageTransitionEnd(e) {
-        this.setState({
+        this.props.dispatch(setState({
             transitionProgress: 'ended'
-        });
+        }));
     }
     render() {
-        if(!this.state.selected) return null;
+        if(!this.props.selectedTab) return null;
 
         const pagesClassNames = ['pages',
-            `page-selected-${this.state.selected}`
+            `page-selected-${this.props.selectedTab}`
         ].join(' ');
         const mainViewClassNames = ['main-view',
-            `page-transition-progress-${this.state.transitionProgress}`
+            `page-transition-progress-${this.props.transitionProgress}`
         ].join(' ');
-        const menuItems = this.state.menuItems.map(item => {
+        const menuItems = this.menuItems.map(item => {
             return(
                 <li key={item} className="main-menu-item">
                     <a onClick={this.selectOnClick}
-                       className={this.state.selected === item ? "active" : "" } data-id={item} href="#">{item}</a>
+                       className={this.props.selectedTab === item ? "active" : "" } data-id={item} href="#">{item}</a>
                 </li>
             );
         });
@@ -92,3 +90,8 @@ export default class Main extends React.Component {
         );
     }
 }
+
+export default connect(state => ({
+    selectedTab: state.selectedTab,
+    transitionProgress: state.transitionProgress
+}))(Main);
