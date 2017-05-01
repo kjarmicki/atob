@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { setState } from '../redux/action-creators';
 import autobind from '../util/autobind';
 import PointsPage from './points/points-page';
 import NavigationPage from './navigation/navigation-page';
@@ -12,16 +11,7 @@ class Main extends React.Component {
 
         this.menuItems = ['points', 'navigation'];
         this.props.events.on('point.choose', () => this.select('navigation'));
-        this.props.events.on('point.choose', this.preventScreenSleep);
         this.props.events.on('point.disregard', () => this.select('points'));
-        this.props.events.on('point.disregard', this.allowScreenSleep)
-    }
-    componentDidMount() {
-        this.props.pointRepository.retrieveChosen()
-            .then(chosenPoint => {
-                if(chosenPoint) this.preventScreenSleep();
-                this.props.dispatch(setState({selectedTab: chosenPoint ? 'navigation' : 'points'}));
-            });
     }
     selectOnClick(e) {
         e.preventDefault();
@@ -29,38 +19,25 @@ class Main extends React.Component {
         this.select(id);
     }
     select(id) {
-        if(this.props.selectedTab !== id) {
-            this.props.dispatch(setState({
-                selectedTab: id,
-                transitionProgress: 'running'
-            }));
-        }
+        this.props.dispatch(this.props.actions.selectTab(id));
     }
-    preventScreenSleep() {
-        this.props.insomnia.keepAwake();
-    }
-    allowScreenSleep() {
-        this.props.insomnia.allowSleepAgain();
-    }
-    pageTransitionEnd(e) {
-        this.props.dispatch(setState({
-            transitionProgress: 'ended'
-        }));
+    tabTransitionEnd(e) {
+        this.props.dispatch(this.props.actions.tabTransitionEnded());
     }
     render() {
-        if(!this.props.selectedTab) return null;
+        if(!this.props.tabs.selected) return null;
 
         const pagesClassNames = ['pages',
-            `page-selected-${this.props.selectedTab}`
+            `page-selected-${this.props.tabs.selected}`
         ].join(' ');
         const mainViewClassNames = ['main-view',
-            `page-transition-progress-${this.props.transitionProgress}`
+            `page-transition-progress-${this.props.tabs.transitionProgress}`
         ].join(' ');
         const menuItems = this.menuItems.map(item => {
             return(
                 <li key={item} className="main-menu-item">
                     <a onClick={this.selectOnClick}
-                       className={this.props.selectedTab === item ? "active" : "" } data-id={item} href="#">{item}</a>
+                       className={this.props.tabs.selected === item ? "active" : "" } data-id={item} href="#">{item}</a>
                 </li>
             );
         });
@@ -73,8 +50,9 @@ class Main extends React.Component {
                         </ul>
                     </nav>
                 </header>
-                <div onTransitionEnd={this.pageTransitionEnd} className={pagesClassNames}>
+                <div onTransitionEnd={this.tabTransitionEnd} className={pagesClassNames}>
                     <PointsPage
+                        actions={this.props.actions}
                         pointRepository={this.props.pointRepository}
                         geolocationProvider={this.props.geolocationProvider}
                         events={this.props.events}
@@ -92,6 +70,7 @@ class Main extends React.Component {
 }
 
 export default connect(state => ({
-    selectedTab: state.selectedTab,
-    transitionProgress: state.transitionProgress
+    tabs: state.tabs,
+    keepAwake: state.keepAwake,
+    points: state.points
 }))(Main);

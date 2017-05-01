@@ -1,21 +1,22 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import moment from 'moment';
 import autobind from '../../util/autobind';
 
-export default class Point extends React.Component {
+class Point extends React.Component {
     constructor(props) {
         super(props);
         autobind(this);
     }
     remove() {
         window.confirm(`Are you sure you want to remove point ${this.props.model.getName()}?`)
-        && this.props.events.emit('point.remove', this.props.model);
+        && this.props.dispatch(this.props.actions.removePoint(this.props.model));
     }
     choose() {
-        this.props.events.emit('point.choose', this.props.model);
+        this.props.dispatch(this.props.actions.choosePoint(this.props.model));
     }
     disregard() {
-        this.props.events.emit('point.disregard', this.props.model);
+        this.props.dispatch(this.props.actions.disregardPoint(this.props.model));
     }
     render() {
         const p = this.props.model.serialize();
@@ -47,3 +48,5 @@ export default class Point extends React.Component {
         )
     }
 }
+
+export default connect()(Point);

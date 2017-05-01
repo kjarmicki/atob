@@ -1,64 +1,23 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import Promise from 'bluebird';
 import autobind from '../../util/autobind';
 import Point from './point'
 import PointForm from './point-form'
 
-export default class PointsPage extends React.Component {
+class PointsPage extends React.Component {
     constructor(props) {
         super(props);
         autobind(this);
-
-        this.state = {
-            points: []
-        };
-        this.props.events.on('point.add', this.updatePoints);
-        this.props.events.on('point.remove', this.removePoint);
-        this.props.events.on('point.choose', this.choosePoint);
-        this.props.events.on('point.disregard', this.disregardPoint);
-    }
-
-    componentDidMount() {
-        this.updatePoints();
-    }
-
-    updatePoints() {
-        return this.props.pointRepository.retrieveAll()
-            .then(points => this.setState({points}));
-    }
-
-    removePoint(point) {
-        return this.props.pointRepository.remove(point)
-            .then(() => this.updatePoints());
-    }
-
-    choosePoint(point) {
-        const currentlyChosen = this.state.points.filter(point => point.isChosenForNavigation())[0];
-        const operations = [];
-        if(currentlyChosen) {
-            const previous = currentlyChosen.disregardForNavigation();
-            operations.push(this.props.pointRepository.store(previous));
-        }
-        const newlyChosen = point.chooseForNavigation();
-        operations.push(this.props.pointRepository.store(newlyChosen));
-
-        Promise.all(operations)
-            .then(() => this.updatePoints())
-            .catch(err => console.error(err));
-    }
-
-    disregardPoint(point) {
-        const newlyDisregarded = point.disregardForNavigation();
-        this.props.pointRepository.store(newlyDisregarded)
-            .then(() => this.updatePoints());
     }
 
     render() {
         let points;
-        if(this.state.points.length > 0) {
-            points = this.state.points.map(point => {
+        if(this.props.points.length > 0) {
+            points = this.props.points.map(point => {
                 return (
                     <Point
+                        actions={this.props.actions}
                         key={point.uniqueKey()}
                         model={point}
                         events={this.props.events}
@@ -75,7 +34,7 @@ export default class PointsPage extends React.Component {
                     {points}
                 </ul>
                 <PointForm
-                    pointRepository={this.props.pointRepository}
+                    pointRepository={null}
                     geolocationProvider={this.props.geolocationProvider}
                     events={this.props.events}
                 />
@@ -83,3 +42,7 @@ export default class PointsPage extends React.Component {
         )
     }
 }
+
+export default connect(state => ({
+    points: state.points
+}))(PointsPage);

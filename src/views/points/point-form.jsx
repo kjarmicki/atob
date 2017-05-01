@@ -8,13 +8,6 @@ export default class PointForm extends React.Component {
     constructor(props) {
         super(props);
         autobind(this);
-
-        this.state = {
-            name: '',
-            message: '',
-            watchId: null,
-            formVisible: false
-        };
         this.input = null;
         this.overlay = null;
     }
@@ -24,9 +17,7 @@ export default class PointForm extends React.Component {
     }
 
     updateName(e) {
-        this.setState({
-            name: e.target.value
-        });
+        this.props.dispatch(this.props.actions.formPointName(e.target.value));
     }
 
     showForm(e) {

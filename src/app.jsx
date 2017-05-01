@@ -1,12 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { createStore } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
+import thunk from 'redux-thunk';
 import FastClick from 'fastclick';
 import {EventEmitter} from 'events';
 import Main from './views/main';
 
 import rootReducer from './redux/reducers';
+import actionsCreator from './redux/actions';
 import storagePointRepository from './repository/storage-point-repository';
 import browserGeolocationProvider from './infrastructure/geolocation/browser-geolocation-provider';
 import orientationResolver from './infrastructure/orientation/orientation-resolver';
@@ -20,19 +22,24 @@ document.addEventListener('deviceready', () => {
     const pointRepository = storagePointRepository(localStorage);
     const geolocationProvider = browserGeolocationProvider(window, clock);
     const orientationProvider = orientationResolver(window);
-    const store = createStore(rootReducer);
     const pauseWatcher = cordovaPauseWatcher(window, clock, 1000 * 60 * 5);
     const events = new EventEmitter();
     const insomnia = (window.plugins && window.plugins.insomnia) || {
             keepAwake() {},
             allowSleepAgain() {}
         };
+    const actions = actionsCreator(insomnia, pointRepository);
+    const store = createStore(rootReducer, applyMiddleware(thunk));
 
     // kick off the GPS for 10 seconds
     geolocationProvider.watchCoordinatesForSeconds(10);
 
     // be kind to a phone battery and kill the app if it's unused
     pauseWatcher.startWatching();
+
+    store.dispatch(actions.initPoints())
+        .then(() => pointRepository.retrieveChosen())
+        .then(chosenPoint => store.dispatch(actions.selectTab(chosenPoint ? 'navigation' : 'points')));
 
     FastClick.attach(document.body);
 
@@ -43,8 +50,8 @@ document.addEventListener('deviceready', () => {
                 geolocationProvider={geolocationProvider}
                 orientationProvider={orientationProvider}
                 events={events}
+                actions={actions}
                 clock={clock}
-                insomnia={insomnia}
             />
         </Provider>,
         document.querySelector('#main')
