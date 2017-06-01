@@ -63,18 +63,20 @@ export default function(insomnia, pointRepository, geolocationProvider) {
 
     function addPoint(point) {
         return dispatch => pointRepository.store(point)
-            .then(() => dispatch({
+            .then(() => pointRepository.retrieveAll())
+            .then(points => dispatch({
                 type: ADD_POINT,
-                point
+                points
             }));
     }
 
     function removePoint(point) {
         return dispatch => {
             return pointRepository.remove(point)
-                .then(() => dispatch({
+                .then(() => pointRepository.retrieveAll())
+                .then(points => dispatch({
                     type: REMOVE_POINT,
-                    point
+                    points
                 }));
         };
     }
@@ -93,9 +95,10 @@ export default function(insomnia, pointRepository, geolocationProvider) {
             operations.push(pointRepository.store(newlyChosen));
 
             return Promise.all(operations)
-                .then(() => dispatch({
+                .then(() => pointRepository.retrieveAll())
+                .then(points => dispatch({
                     type: CHOOSE_POINT,
-                    point
+                    points
                 }))
                 .then(() => dispatch(selectTab('navigation')));
         }
@@ -106,9 +109,10 @@ export default function(insomnia, pointRepository, geolocationProvider) {
             dispatch(keepAwakeToggle(false));
             const newlyDisregarded = point.disregardForNavigation();
             return pointRepository.store(newlyDisregarded)
+                .then(() => pointRepository.retrieveAll())
                 .then(() => dispatch({
                     type: DISREGARD_POINT,
-                    point
+                    points
                 }))
                 .then(() => dispatch(selectTab('points')));
         };

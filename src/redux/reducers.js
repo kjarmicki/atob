@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 import { SELECT_TAB, TAB_TRANSITION_ENDED,
     KEEP_AWAKE, ALLOW_SLEEP,
-    INIT_POINTS, REMOVE_POINT, CHOOSE_POINT, DISREGARD_POINT,
+    INIT_POINTS, ADD_POINT, REMOVE_POINT, CHOOSE_POINT, DISREGARD_POINT,
     FORM_POINT_NAME, SHOW_FORM, HIDE_FORM, RESET_FORM, FORM_MESSAGE
 } from './actions';
 
@@ -34,15 +34,10 @@ function keepAwake(state = false, action = {}) {
 
 function points(state = [], action = {}) {
     switch(action.type) {
+        case ADD_POINT:
         case REMOVE_POINT:
-            return state.filter(point =>
-                !point.equals(action.point));
         case CHOOSE_POINT:
-            return state.map(point =>
-                    point.equals(action.point) ? point.chooseForNavigation() : point.disregardForNavigation());
         case DISREGARD_POINT:
-            return state.map(point =>
-                point.equals(action.point) ? point.disregardForNavigation() : point);
         case INIT_POINTS:
             return action.points;
         default:
