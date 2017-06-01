@@ -2,7 +2,7 @@ import { combineReducers } from 'redux';
 import { SELECT_TAB, TAB_TRANSITION_ENDED,
     KEEP_AWAKE, ALLOW_SLEEP,
     INIT_POINTS, REMOVE_POINT, CHOOSE_POINT, DISREGARD_POINT,
-    FORM_POINT_NAME
+    FORM_POINT_NAME, SHOW_FORM, HIDE_FORM, RESET_FORM, FORM_MESSAGE
 } from './actions';
 
 function tabs(state = {
@@ -27,9 +27,8 @@ function tabs(state = {
 }
 
 function keepAwake(state = false, action = {}) {
-    if(action.type === KEEP_AWAKE || action.type === ALLOW_SLEEP) {
-        return action.flag;
-    }
+    if(action.type === KEEP_AWAKE) return true;
+    if(action.type === ALLOW_SLEEP) return false;
     return state;
 }
 
@@ -54,13 +53,29 @@ function points(state = [], action = {}) {
 function pointForm(state = {
     name: '',
     message: '',
-    watchId: null,
     formVisible: false
 }, action = {}) {
     switch(action.type) {
         case FORM_POINT_NAME:
             return Object.assign({}, state, {
                 name: action.name
+            });
+        case  SHOW_FORM:
+            return Object.assign({}, state, {
+                formVisible: true
+            });
+        case HIDE_FORM:
+            return Object.assign({}, state, {
+                formVisible: false
+            });
+        case RESET_FORM:
+            return Object.assign({}, state, {
+                name: '',
+                message: ''
+            });
+        case FORM_MESSAGE:
+            return Object.assign({}, state, {
+                message: action.message
             });
         default:
             return state;

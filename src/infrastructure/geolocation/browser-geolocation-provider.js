@@ -1,6 +1,7 @@
 import Promise from 'bluebird';
 
 export default function browserGeolocationProvider(window, clock) {
+    let watchId = null;
 
     function getCoordinates() {
         return new Promise((resolve, reject) => {
@@ -18,7 +19,7 @@ export default function browserGeolocationProvider(window, clock) {
     }
 
     function watchCoordinates(whenAvailable) {
-        return window.navigator.geolocation.watchPosition(
+        watchId = window.navigator.geolocation.watchPosition(
             position => {
                 whenAvailable && whenAvailable(pluck(position.coords));
             },
@@ -30,14 +31,15 @@ export default function browserGeolocationProvider(window, clock) {
         )
     }
 
-    function stopWatchingCoordinates(watchId) {
+    function stopWatchingCoordinates() {
         if(watchId !== null) {
             window.navigator.geolocation.clearWatch(watchId);
         }
     }
 
     function watchCoordinatesForSeconds(seconds) {
-        const watchId = watchCoordinates();
+        if(watchId) return;
+        watchId = watchCoordinates();
         clock.timeout(seconds * 1000, () => {
             stopWatchingCoordinates(watchId);
         });

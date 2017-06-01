@@ -28,7 +28,7 @@ document.addEventListener('deviceready', () => {
             keepAwake() {},
             allowSleepAgain() {}
         };
-    const actions = actionsCreator(insomnia, pointRepository);
+    const actions = actionsCreator(insomnia, pointRepository, geolocationProvider);
     const store = createStore(rootReducer, applyMiddleware(thunk));
 
     // kick off the GPS for 10 seconds

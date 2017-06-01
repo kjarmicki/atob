@@ -10,8 +10,6 @@ class Main extends React.Component {
         autobind(this);
 
         this.menuItems = ['points', 'navigation'];
-        this.props.events.on('point.choose', () => this.select('navigation'));
-        this.props.events.on('point.disregard', () => this.select('points'));
     }
     selectOnClick(e) {
         e.preventDefault();

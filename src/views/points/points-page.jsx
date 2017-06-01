@@ -34,9 +34,7 @@ class PointsPage extends React.Component {
                     {points}
                 </ul>
                 <PointForm
-                    pointRepository={null}
-                    geolocationProvider={this.props.geolocationProvider}
-                    events={this.props.events}
+                    actions={this.props.actions}
                 />
             </div>
         )
