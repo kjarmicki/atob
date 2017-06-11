@@ -23,8 +23,6 @@ class Main extends React.Component {
         this.props.dispatch(this.props.actions.tabTransitionEnded());
     }
     render() {
-        if(!this.props.tabs.selected) return null;
-
         const pagesClassNames = ['pages',
             `page-selected-${this.props.tabs.selected}`
         ].join(' ');
@@ -51,15 +49,9 @@ class Main extends React.Component {
                 <div onTransitionEnd={this.tabTransitionEnd} className={pagesClassNames}>
                     <PointsPage
                         actions={this.props.actions}
-                        pointRepository={this.props.pointRepository}
-                        geolocationProvider={this.props.geolocationProvider}
-                        events={this.props.events}
                     />
                     <NavigationPage
-                        pointRepository={this.props.pointRepository}
-                        geolocationProvider={this.props.geolocationProvider}
-                        orientationProvider={this.props.orientationProvider}
-                        events={this.props.events}
+                        actions={this.props.actions}
                     />
                 </div>
             </div>

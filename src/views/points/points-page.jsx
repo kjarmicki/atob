@@ -13,14 +13,13 @@ class PointsPage extends React.Component {
 
     render() {
         let points;
-        if(this.props.points.length > 0) {
-            points = this.props.points.map(point => {
+        if(this.props.points.list.length > 0) {
+            points = this.props.points.list.map(point => {
                 return (
                     <Point
                         actions={this.props.actions}
                         key={point.uniqueKey()}
                         model={point}
-                        events={this.props.events}
                         />
                 )
             });

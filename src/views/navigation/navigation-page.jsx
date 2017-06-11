@@ -1,123 +1,58 @@
 import React from 'react';
-import assign from 'object-assign';
+import { connect } from 'react-redux';
 import raf from 'raf';
 import autobind from '../../util/autobind';
 import NavigationBox from './navigation-box';
-import pointModel from '../../model/point';
-import canvasRenderer from '../../rendering/canvas';
-import measurements from '../../measurements/measurements';
 
-export default class NavigationPage extends React.Component {
+class NavigationPage extends React.Component {
     constructor(props) {
         super(props);
         autobind(this);
-
-        this.state = {
-            navigatingToPoint: null,
-            currentPositionPoint: null,
-            alphaRotation: 0,
-            shouldBeUpdating: false,
-            watchId: null,
-            // stateful components
-            geolocationProvider: this.props.geolocationProvider,
-            orientationProvider: this.props.orientationProvider
-        };
-        this.temporaryState = {
-            currentPositionPoint: null
-        };
-
-        this.props.pointRepository.retrieveChosen()
-            .then(chosenPoint => {
-                if(chosenPoint) {
-                    this.startNavigatingTo(chosenPoint);
-                }
-            });
-
-        this.props.events.on('point.choose', chosenPoint => this.startNavigatingTo(chosenPoint));
-        this.props.events.on('point.disregard', () => this.stopNavigating());
-        this.props.events.on('point.remove', point => {
-            if(point.isChosenForNavigation()) this.stopNavigating();
-        });
     }
 
-    startNavigatingTo(destinationPoint) {
-        if(!this.state.shouldBeUpdating) {
-            const watchId = this.state.geolocationProvider.watchCoordinates(currentCoordinates => {
-                const currentPoint = pointModel(assign(currentCoordinates, {
-                    name: 'current'
-                }));
-                this.setTemporaryState({
-                    currentPositionPoint: currentPoint
-                });
-            });
-            this.setState({
-                shouldBeUpdating: true,
-                watchId: watchId
-            });
-            this.state.orientationProvider.startPolling();
+    componentWillReceiveProps(props) {
+        if(props.navigation.shouldBeUpdating) {
             this.updateLoop();
         }
-        this.setState({
-            navigatingToPoint: destinationPoint
-        });
-    }
-
-    stopNavigating() {
-        this.state.geolocationProvider.stopWatchingCoordinates(this.state.watchId);
-        this.state.orientationProvider.stopPolling();
-        this.setState({
-            navigatingToPoint: null,
-            currentPositionPoint: null,
-            alphaRotation: 0,
-            shouldBeUpdating: false,
-            watchId: null
-        });
     }
 
     pointDisregard(e) {
         e && e.preventDefault();
-        this.props.events.emit('point.disregard', this.state.navigatingToPoint);
+        this.props.dispatch(this.props.actions.disregardPoint(this.props.points.navigatingTo));
     }
 
     updateLoop() {
-        let loop;
-        raf(loop = () => {
-            if(this.state.shouldBeUpdating) {
-                const alphaRotation = this.state.orientationProvider.getHeading();
-                this.setState(assign({}, this.temporaryState, {alphaRotation}));
-                raf(loop);
+        raf(() => {
+            if(this.props.navigation.shouldBeUpdating) {
+                this.props.dispatch(this.props.actions.requestOrientation());
             }
         });
     }
 
-    setTemporaryState(newState) {
-        assign(this.temporaryState, newState);
-    }
-
     render() {
-        const hud = (this.state.navigatingToPoint && this.state.currentPositionPoint) ?
+        const hud = (this.props.points.navigatingTo && this.props.points.position) ?
                 <div className="navigation-hud">
                     <div className="cell">
-                        <strong>{this.state.navigatingToPoint.getName()}</strong> distance: {this.state.currentPositionPoint.distanceFrom(this.state.navigatingToPoint)} meters
+                        <strong>{this.props.points.navigatingTo.getName()}</strong> distance:
+                        {this.props.points.position.distanceFrom(this.props.points.navigatingTo)} meters
                     </div>
-                    <div className="cell">GPS accuracy: {this.state.currentPositionPoint.getAccuracy()} meters</div>
+                    <div className="cell">GPS accuracy: {this.props.points.position.getAccuracy()} meters</div>
                     <button className="btn btn-standalone navigation-point-disregard" onClick={this.pointDisregard}>Stop navigating</button>
                 </div> :
-            this.state.shouldBeUpdating ?
+            this.props.navigation.shouldBeUpdating ?
                 <div className="cell navigation-hud">Waiting for the GPS...</div> :
                 <div className="cell navigation-hud">Not navigating currently</div>;
 
         return(
             <div className="navigation-page">
-                <NavigationBox
-                    measurements={measurements}
-                    canvasRenderer={canvasRenderer}
-                    alphaRotation={this.state.alphaRotation}
-                    navigatingToPoint={this.state.navigatingToPoint}
-                    currentPositionPoint={this.state.currentPositionPoint}
-                />
+                <NavigationBox actions={this.props.actions} />
                 {hud}
             </div>
         );
     }
 }
+
+export default connect(state => ({
+    points: state.points,
+    navigation: state.navigation
+}))(NavigationPage);

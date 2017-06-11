@@ -71,7 +71,7 @@ class PointForm extends React.Component {
         pointModel.validate({name});
 
         // does the point have a unique name?
-        if(!this.props.points.every(point => point.serialize().name !== name)) {
+        if(!this.props.points.list.every(point => point.serialize().name !== name)) {
             throw new Error('Point with such name already exists');
         }
     }

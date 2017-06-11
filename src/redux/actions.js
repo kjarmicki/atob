@@ -1,8 +1,10 @@
+import assign from 'object-assign';
 import pointModel from '../model/point';
 
 // UI
 export const SELECT_TAB = 'SELECT_TAB';
 export const TAB_TRANSITION_ENDED = 'TAB_TRANSITION_ENDED';
+export const WINDOW_RESIZE = 'WINDOW_RESIZE';
 
 // screen sleep
 export const KEEP_AWAKE = 'KEEP_AWAKE';
@@ -14,6 +16,8 @@ export const ADD_POINT = 'ADD_POINT';
 export const REMOVE_POINT = 'REMOVE_POINT';
 export const CHOOSE_POINT = 'CHOOSE_POINT';
 export const DISREGARD_POINT = 'DISREGARD_POINT';
+export const SET_CURRENT_POSITION = 'SET_CURRENT_POSITION';
+export const UNSET_CURRENT_POSITION = 'UNSET_CURRENT_POSITION';
 
 // new point form
 export const FORM_POINT_NAME = 'FORM_POINT_NAME';
@@ -22,10 +26,12 @@ export const HIDE_FORM = 'HIDE_FORM';
 export const RESET_FORM = 'RESET_FORM';
 export const FORM_MESSAGE = 'FORM_MESSAGE';
 
-// geolocation
+// navigation
+export const ALPHA_ROTATION = 'ALPHA_ROTATION';
+export const SHOULD_BE_UPDATING = 'SHOULD_BE_UPDATING';
+export const SHOULD_NOT_BE_UPDATING = 'SHOULD_NOT_BE_UPDATING';
 
-
-export default function(insomnia, pointRepository, geolocationProvider) {
+export default function(insomnia, pointRepository, geolocationProvider, orientationProvider) {
     function selectTab(tab) {
         return {
             type: SELECT_TAB,
@@ -36,6 +42,13 @@ export default function(insomnia, pointRepository, geolocationProvider) {
     function tabTransitionEnded() {
         return {
             type: TAB_TRANSITION_ENDED
+        };
+    }
+
+    function windowResize(width, height) {
+        return {
+            type: WINDOW_RESIZE,
+            width, height
         };
     }
 
@@ -55,29 +68,38 @@ export default function(insomnia, pointRepository, geolocationProvider) {
 
     function initPoints() {
         return dispatch => pointRepository.retrieveAll()
-            .then(points => dispatch({
-                type: INIT_POINTS,
-                points
-            }));
+            .then(list => {
+                dispatch({
+                    type: INIT_POINTS,
+                    list
+                });
+                const chosenForNavigation = list.filter(point => point.isChosenForNavigation())[0];
+                if(chosenForNavigation) {
+                    return dispatch(choosePoint(chosenForNavigation));
+                }
+                return Promise.resolve();
+            });
     }
 
     function addPoint(point) {
         return dispatch => pointRepository.store(point)
             .then(() => pointRepository.retrieveAll())
-            .then(points => dispatch({
+            .then(list => dispatch({
                 type: ADD_POINT,
-                points
+                list
             }));
     }
 
     function removePoint(point) {
         return dispatch => {
-            return pointRepository.remove(point)
+            return Promise.resolve()
+                .then(() => point.isChosenForNavigation() ? disregardPoint(point) : null)
+                .then(() => disregardPoint(point))
                 .then(() => pointRepository.retrieveAll())
-                .then(points => dispatch({
+                .then(list => dispatch({
                     type: REMOVE_POINT,
-                    points
-                }));
+                    list
+                }))
         };
     }
 
@@ -96,11 +118,17 @@ export default function(insomnia, pointRepository, geolocationProvider) {
 
             return Promise.all(operations)
                 .then(() => pointRepository.retrieveAll())
-                .then(points => dispatch({
+                .then(list => dispatch({
                     type: CHOOSE_POINT,
-                    points
+                    navigatingTo: newlyChosen,
+                    list
                 }))
-                .then(() => dispatch(selectTab('navigation')));
+                .then(() => {
+                    dispatch(requestUpdates());
+                    dispatch(pollOrientation());
+                    dispatch(watchCoordinates());
+                    dispatch(selectTab('navigation'));
+                });
         }
     }
 
@@ -110,11 +138,16 @@ export default function(insomnia, pointRepository, geolocationProvider) {
             const newlyDisregarded = point.disregardForNavigation();
             return pointRepository.store(newlyDisregarded)
                 .then(() => pointRepository.retrieveAll())
-                .then(() => dispatch({
+                .then(list => dispatch({
                     type: DISREGARD_POINT,
-                    points
+                    list
                 }))
-                .then(() => dispatch(selectTab('points')));
+                .then(() => {
+                    dispatch(stopUpdates());
+                    dispatch(stopPollingOrientation());
+                    dispatch(stopWatchingCoordinates());
+                    dispatch(selectTab('points'));
+                });
         };
     }
 
@@ -150,15 +183,28 @@ export default function(insomnia, pointRepository, geolocationProvider) {
         };
     }
 
+    function setCurrentPosition(currentCoordinates) {
+        const position = pointModel(assign(currentCoordinates, {
+            name: 'current'
+        }));
+        return {
+            type: SET_CURRENT_POSITION,
+            position
+        }
+    }
+
     function watchCoordinates() {
         return dispatch => {
-            geolocationProvider.watchCoordinates();
+            geolocationProvider.watchCoordinates(coordinates => {
+                dispatch(setCurrentPosition(coordinates));
+            });
         };
     }
 
     function stopWatchingCoordinates() {
-        return dispatch => {
-            geolocationProvider.stopWatchingCoordinates();
+        geolocationProvider.stopWatchingCoordinates();
+        return {
+            type: UNSET_CURRENT_POSITION
         };
     }
 
@@ -168,13 +214,44 @@ export default function(insomnia, pointRepository, geolocationProvider) {
         };
     }
 
+    function pollOrientation() {
+        return () => orientationProvider.startPolling();
+    }
 
+    function requestOrientation() {
+        return {
+            type: ALPHA_ROTATION,
+            alphaRotation: orientationProvider.getHeading()
+        };
+    }
+
+    function stopPollingOrientation() {
+        orientationProvider.stopPolling();
+        return {
+            type: ALPHA_ROTATION,
+            alphaRotation: null
+        };
+    }
+
+    function requestUpdates() {
+        return {
+            type: SHOULD_BE_UPDATING
+        };
+    }
+
+    function stopUpdates() {
+        return {
+            type: SHOULD_NOT_BE_UPDATING
+        };
+    }
 
     return {
-        selectTab, tabTransitionEnded,
+        selectTab, tabTransitionEnded, windowResize,
         keepAwakeToggle,
         initPoints, addPoint, removePoint, choosePoint, disregardPoint,
         formPointName, showForm, hideForm, resetForm, formMessage,
-        watchCoordinates, stopWatchingCoordinates, getCoordinates
+        watchCoordinates, stopWatchingCoordinates, getCoordinates,
+        pollOrientation, requestOrientation, stopPollingOrientation,
+        requestUpdates, stopUpdates
     };
 }
