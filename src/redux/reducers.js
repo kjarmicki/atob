@@ -2,7 +2,7 @@ import { combineReducers } from 'redux';
 import assign from 'object-assign';
 import { SELECT_TAB, TAB_TRANSITION_ENDED,
     KEEP_AWAKE, ALLOW_SLEEP, WINDOW_RESIZE,
-    INIT_POINTS, ADD_POINT, REMOVE_POINT, CHOOSE_POINT, DISREGARD_POINT, SET_CURRENT_POSITION, UNSET_CURRENT_POSITION,
+    UPDATE_POINTS, CHOOSE_POINT, DISREGARD_POINT, SET_CURRENT_POSITION, UNSET_CURRENT_POSITION,
     SHOULD_BE_UPDATING, SHOULD_NOT_BE_UPDATING, ALPHA_ROTATION,
     FORM_POINT_NAME, SHOW_FORM, HIDE_FORM, RESET_FORM, FORM_MESSAGE
 } from './actions';
@@ -73,9 +73,7 @@ function points(state = {
             return assign({}, state, {
                 position: null
             });
-        case ADD_POINT:
-        case REMOVE_POINT:
-        case INIT_POINTS:
+        case UPDATE_POINTS:
             return assign({}, state, {
                 list: action.list
             });

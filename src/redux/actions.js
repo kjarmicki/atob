@@ -11,9 +11,7 @@ export const KEEP_AWAKE = 'KEEP_AWAKE';
 export const ALLOW_SLEEP = 'ALLOW_SLEEP';
 
 // points management
-export const INIT_POINTS = 'INIT_POINTS';
-export const ADD_POINT = 'ADD_POINT';
-export const REMOVE_POINT = 'REMOVE_POINT';
+export const UPDATE_POINTS = 'UPDATE_POINTS';
 export const CHOOSE_POINT = 'CHOOSE_POINT';
 export const DISREGARD_POINT = 'DISREGARD_POINT';
 export const SET_CURRENT_POSITION = 'SET_CURRENT_POSITION';
@@ -70,7 +68,7 @@ export default function(insomnia, pointRepository, geolocationProvider, orientat
         return dispatch => pointRepository.retrieveAll()
             .then(list => {
                 dispatch({
-                    type: INIT_POINTS,
+                    type: UPDATE_POINTS,
                     list
                 });
                 const chosenForNavigation = list.filter(point => point.isChosenForNavigation())[0];
@@ -85,7 +83,7 @@ export default function(insomnia, pointRepository, geolocationProvider, orientat
         return dispatch => pointRepository.store(point)
             .then(() => pointRepository.retrieveAll())
             .then(list => dispatch({
-                type: ADD_POINT,
+                type: UPDATE_POINTS,
                 list
             }));
     }
@@ -93,13 +91,13 @@ export default function(insomnia, pointRepository, geolocationProvider, orientat
     function removePoint(point) {
         return dispatch => {
             return Promise.resolve()
-                .then(() => point.isChosenForNavigation() ? disregardPoint(point) : null)
-                .then(() => disregardPoint(point))
+                .then(() => point.isChosenForNavigation() ? disregardPoint(point)(dispatch) : null)
+                .then(() => pointRepository.remove(point))
                 .then(() => pointRepository.retrieveAll())
                 .then(list => dispatch({
-                    type: REMOVE_POINT,
+                    type: UPDATE_POINTS,
                     list
-                }))
+                }));
         };
     }
 

@@ -23,9 +23,9 @@ class PointForm extends React.Component {
 
     showForm(e) {
         e && e.preventDefault();
-        this.input.focus();
         this.props.dispatch(this.props.actions.showForm());
         this.props.dispatch(this.props.actions.watchCoordinates());
+        this.input.focus();
     }
 
     hideForm(e) {
