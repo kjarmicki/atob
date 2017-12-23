@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import raf from 'raf';
 import autobind from '../../util/autobind';
 import NavigationBox from './navigation-box';
+import * as actions from '../../redux/actions'
 
 class NavigationPage extends React.Component {
     constructor(props) {
@@ -18,13 +19,13 @@ class NavigationPage extends React.Component {
 
     pointDisregard(e) {
         e && e.preventDefault();
-        this.props.dispatch(this.props.actions.disregardPoint(this.props.points.navigatingTo));
+        this.props.dispatch(actions.disregardPoint(this.props.points.navigatingTo));
     }
 
     updateLoop() {
         raf(() => {
             if(this.props.navigation.shouldBeUpdating) {
-                this.props.dispatch(this.props.actions.requestOrientation());
+                this.props.dispatch(actions.requestOrientation());
             }
         });
     }
@@ -45,7 +46,7 @@ class NavigationPage extends React.Component {
 
         return(
             <div className="navigation-page">
-                <NavigationBox actions={this.props.actions} />
+                <NavigationBox />
                 {hud}
             </div>
         );

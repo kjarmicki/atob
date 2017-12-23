@@ -7,7 +7,7 @@ import FastClick from 'fastclick';
 import Main from './views/main';
 
 import rootReducer from './redux/reducers';
-import actionsCreator from './redux/actions';
+import * as actions from './redux/actions';
 import storagePointRepository from './repository/storage-point-repository';
 import browserGeolocationProvider from './infrastructure/geolocation/browser-geolocation-provider';
 import orientationResolver from './infrastructure/orientation/orientation-resolver';
@@ -26,9 +26,9 @@ document.addEventListener('deviceready', () => {
             keepAwake() {},
             allowSleepAgain() {}
         };
-    const actions = actionsCreator(insomnia, pointRepository, geolocationProvider, orientationProvider);
+    const dependencies = {insomnia, pointRepository, geolocationProvider, orientationProvider};
     const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-    const store = createStore(rootReducer, composeEnhancers(applyMiddleware(thunk)));
+    const store = createStore(rootReducer, composeEnhancers(applyMiddleware(thunk.withExtraArgument(dependencies))));
 
     // kick off the GPS for 10 seconds
     geolocationProvider.watchCoordinatesForSeconds(10);
@@ -38,12 +38,11 @@ document.addEventListener('deviceready', () => {
 
     FastClick.attach(document.body);
 
-    store.dispatch(actions.initPoints())
+    actions.initPoints()(store.dispatch, store.getState, { pointRepository })
         .then(() => {
             ReactDOM.render(
                 <Provider store={store}>
                     <Main
-                        actions={actions}
                         clock={clock}
                         />
                 </Provider>,

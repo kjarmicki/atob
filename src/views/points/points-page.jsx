@@ -4,6 +4,7 @@ import Promise from 'bluebird';
 import autobind from '../../util/autobind';
 import Point from './point'
 import PointForm from './point-form'
+import * as actions from '../../redux/actions'
 
 class PointsPage extends React.Component {
     constructor(props) {
@@ -17,7 +18,6 @@ class PointsPage extends React.Component {
             points = this.props.points.list.map(point => {
                 return (
                     <Point
-                        actions={this.props.actions}
                         key={point.uniqueKey()}
                         model={point}
                         />
@@ -32,9 +32,7 @@ class PointsPage extends React.Component {
                 <ul className="points-list">
                     {points}
                 </ul>
-                <PointForm
-                    actions={this.props.actions}
-                />
+                <PointForm />
             </div>
         )
     }

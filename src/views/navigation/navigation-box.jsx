@@ -4,6 +4,7 @@ import assign from 'object-assign';
 import autobind from '../../util/autobind';
 import canvasRenderer from '../../rendering/canvas';
 import measurements from '../../measurements/measurements';
+import * as actions from '../../redux/actions';
 
 class NavigationBox extends React.Component {
     constructor(props) {
@@ -25,7 +26,7 @@ class NavigationBox extends React.Component {
     }
 
     onResize() {
-        this.props.dispatch(this.props.actions.windowResize(
+        this.props.dispatch(actions.windowResize(
             window.innerWidth, window.innerHeight
         ));
     }

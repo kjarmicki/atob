@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import autobind from '../util/autobind';
 import PointsPage from './points/points-page';
 import NavigationPage from './navigation/navigation-page';
+import * as actions  from '../redux/actions';
 
 class Main extends React.Component {
     constructor(props) {
@@ -17,10 +18,10 @@ class Main extends React.Component {
         this.select(id);
     }
     select(id) {
-        this.props.dispatch(this.props.actions.selectTab(id));
+        this.props.dispatch(actions.selectTab(id));
     }
     tabTransitionEnd(e) {
-        this.props.dispatch(this.props.actions.tabTransitionEnded());
+        this.props.dispatch(actions.tabTransitionEnded());
     }
     render() {
         const pagesClassNames = ['pages',
@@ -47,12 +48,8 @@ class Main extends React.Component {
                     </nav>
                 </header>
                 <div onTransitionEnd={this.tabTransitionEnd} className={pagesClassNames}>
-                    <PointsPage
-                        actions={this.props.actions}
-                    />
-                    <NavigationPage
-                        actions={this.props.actions}
-                    />
+                    <PointsPage />
+                    <NavigationPage />
                 </div>
             </div>
         );

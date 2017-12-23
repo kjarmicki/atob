@@ -4,6 +4,7 @@ import assign from 'object-assign';
 import Promise from 'bluebird';
 import autobind from '../../util/autobind';
 import pointModel from '../../model/point';
+import * as actions from '../../redux/actions'
 
 class PointForm extends React.Component {
     constructor(props) {
@@ -18,25 +19,25 @@ class PointForm extends React.Component {
     }
 
     updateName(e) {
-        this.props.dispatch(this.props.actions.formPointName(e.target.value));
+        this.props.dispatch(actions.formPointName(e.target.value));
     }
 
     showForm(e) {
         e && e.preventDefault();
-        this.props.dispatch(this.props.actions.showForm());
-        this.props.dispatch(this.props.actions.watchCoordinates());
+        this.props.dispatch(actions.showForm());
+        this.props.dispatch(actions.watchCoordinates());
         this.input.focus();
     }
 
     hideForm(e) {
         e && e.preventDefault();
-        this.props.dispatch(this.props.actions.hideForm());
-        this.props.dispatch(this.props.actions.stopWatchingCoordinates());
+        this.props.dispatch(actions.hideForm());
+        this.props.dispatch(actions.stopWatchingCoordinates());
     }
 
     cancel(e) {
         e && e.preventDefault();
-        this.props.dispatch(this.props.actions.resetForm());
+        this.props.dispatch(actions.resetForm());
         this.hideForm();
     }
 
@@ -46,15 +47,15 @@ class PointForm extends React.Component {
 
         return Promise.resolve()
             .then(() => this.validatePoint({name}))
-            .then(() => this.props.dispatch(this.props.actions.formMessage('Waiting for the GPS...')))
-            .then(() => this.props.dispatch(this.props.actions.getCoordinates()))
+            .then(() => this.props.dispatch(actions.formMessage('Waiting for the GPS...')))
+            .then(() => this.props.dispatch(actions.getCoordinates()))
             .then(coordinates => this.storePoint(name, coordinates))
             .then(() => {
-                this.props.dispatch(this.props.actions.resetForm());
+                this.props.dispatch(actions.resetForm());
                 this.hideForm();
             })
             .catch(err => {
-                this.props.dispatch(this.props.actions.formMessage(err.message));
+                this.props.dispatch(actions.formMessage(err.message));
                 this.input.focus();
             });
     }
@@ -63,7 +64,7 @@ class PointForm extends React.Component {
         const point = pointModel(assign({}, coordinates, {
             name: name
         }));
-        return this.props.dispatch(this.props.actions.addPoint(point));
+        return this.props.dispatch(actions.addPoint(point));
     }
 
     validatePoint({name}) {

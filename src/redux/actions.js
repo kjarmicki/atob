@@ -29,227 +29,227 @@ export const ALPHA_ROTATION = 'ALPHA_ROTATION';
 export const SHOULD_BE_UPDATING = 'SHOULD_BE_UPDATING';
 export const SHOULD_NOT_BE_UPDATING = 'SHOULD_NOT_BE_UPDATING';
 
-export default function(insomnia, pointRepository, geolocationProvider, orientationProvider) {
-    function selectTab(tab) {
-        return {
-            type: SELECT_TAB,
-            tab
-        };
-    }
+export function selectTab(tab) {
+    return {
+        type: SELECT_TAB,
+        tab
+    };
+}
 
-    function tabTransitionEnded() {
-        return {
-            type: TAB_TRANSITION_ENDED
-        };
-    }
+export function tabTransitionEnded() {
+    return {
+        type: TAB_TRANSITION_ENDED
+    };
+}
 
-    function windowResize(width, height) {
-        return {
-            type: WINDOW_RESIZE,
-            width, height
-        };
-    }
+export function windowResize(width, height) {
+    return {
+        type: WINDOW_RESIZE,
+        width, height
+    };
+}
 
-    function keepAwakeToggle(flag) {
+export function keepAwakeToggle(flag) {
+    return (dispatch, getState, { insomnia }) => {
         if (flag) {
             insomnia.keepAwake();
-            return {
+            return dispatch({
                 type: KEEP_AWAKE
-            }
+            });
         } else {
             insomnia.allowSleepAgain();
-            return {
+            return dispatch({
                 type: ALLOW_SLEEP
-            };
-        }
-    }
-
-    function initPoints() {
-        return dispatch => pointRepository.retrieveAll()
-            .then(list => {
-                dispatch({
-                    type: UPDATE_POINTS,
-                    list
-                });
-                const chosenForNavigation = list.filter(point => point.isChosenForNavigation())[0];
-                if(chosenForNavigation) {
-                    return dispatch(choosePoint(chosenForNavigation));
-                }
-                return Promise.resolve();
             });
-    }
+        }
+    };
+}
 
-    function addPoint(point) {
-        return dispatch => pointRepository.store(point)
+export function initPoints() {
+    return (dispatch, getState, { pointRepository }) => pointRepository.retrieveAll()
+        .then(list => {
+            dispatch({
+                type: UPDATE_POINTS,
+                list
+            });
+            const chosenForNavigation = list.filter(point => point.isChosenForNavigation())[0];
+            if(chosenForNavigation) {
+                return dispatch(choosePoint(chosenForNavigation));
+            }
+            return Promise.resolve();
+        });
+}
+
+export function addPoint(point) {
+    return (dispatch, getState, { pointRepository }) => pointRepository.store(point)
+        .then(() => pointRepository.retrieveAll())
+        .then(list => dispatch({
+            type: UPDATE_POINTS,
+            list
+        }));
+}
+
+export function removePoint(point) {
+    return (dispatch, getState, { pointRepository }) => {
+        return Promise.resolve()
+            .then(() => point.isChosenForNavigation() ? disregardPoint(point)(dispatch, getState, { pointRepository }) : null)
+            .then(() => pointRepository.remove(point))
             .then(() => pointRepository.retrieveAll())
             .then(list => dispatch({
                 type: UPDATE_POINTS,
                 list
             }));
-    }
+    };
+}
 
-    function removePoint(point) {
-        return dispatch => {
-            return Promise.resolve()
-                .then(() => point.isChosenForNavigation() ? disregardPoint(point)(dispatch) : null)
-                .then(() => pointRepository.remove(point))
-                .then(() => pointRepository.retrieveAll())
-                .then(list => dispatch({
-                    type: UPDATE_POINTS,
-                    list
-                }));
-        };
-    }
+export function choosePoint(point) {
+    return (dispatch, getState, { pointRepository, insomnia }) => {
+        dispatch(keepAwakeToggle(true)(dispatch, getState, {insomnia}));
 
-    function choosePoint(point) {
-        return dispatch => {
-            dispatch(keepAwakeToggle(true));
-            const operations = [];
-            const currentlyChosen = pointRepository.retrieveAll()
-                .filter(point => point.isChosenForNavigation())[0];
-            if (currentlyChosen && !currentlyChosen.equals(point)) {
-                const previous = currentlyChosen.disregardForNavigation();
-                operations.push(pointRepository.store(previous));
-            }
-            const newlyChosen = point.chooseForNavigation();
-            operations.push(pointRepository.store(newlyChosen));
+        let newlyChosen;
+        return pointRepository.retrieveAll()
+            .then(points => {
+                const operations = [];
+                const currentlyChosen = points.filter(point => point.isChosenForNavigation())[0];
+                if (currentlyChosen && !currentlyChosen.equals(point)) {
+                    const previous = currentlyChosen.disregardForNavigation();
+                    operations.push(pointRepository.store(previous));
+                }
+                newlyChosen = point.chooseForNavigation();
+                operations.push(pointRepository.store(newlyChosen));
 
-            return Promise.all(operations)
-                .then(() => pointRepository.retrieveAll())
-                .then(list => dispatch({
-                    type: CHOOSE_POINT,
-                    navigatingTo: newlyChosen,
-                    list
-                }))
-                .then(() => {
-                    dispatch(requestUpdates());
-                    dispatch(pollOrientation());
-                    dispatch(watchCoordinates());
-                    dispatch(selectTab('navigation'));
-                });
-        }
-    }
-
-    function disregardPoint(point) {
-        return dispatch => {
-            dispatch(keepAwakeToggle(false));
-            const newlyDisregarded = point.disregardForNavigation();
-            return pointRepository.store(newlyDisregarded)
-                .then(() => pointRepository.retrieveAll())
-                .then(list => dispatch({
-                    type: DISREGARD_POINT,
-                    list
-                }))
-                .then(() => {
-                    dispatch(stopUpdates());
-                    dispatch(stopPollingOrientation());
-                    dispatch(stopWatchingCoordinates());
-                    dispatch(selectTab('points'));
-                });
-        };
-    }
-
-    function formPointName(name) {
-        return {
-            type: FORM_POINT_NAME,
-            name
-        };
-    }
-
-    function showForm() {
-        return {
-            type: SHOW_FORM
-        };
-    }
-
-    function hideForm() {
-        return {
-            type: HIDE_FORM
-        };
-    }
-
-    function resetForm() {
-        return {
-            type: RESET_FORM
-        };
-    }
-
-    function formMessage(message) {
-        return {
-            type: FORM_MESSAGE,
-            message
-        };
-    }
-
-    function setCurrentPosition(currentCoordinates) {
-        const position = pointModel(assign(currentCoordinates, {
-            name: 'current'
-        }));
-        return {
-            type: SET_CURRENT_POSITION,
-            position
-        }
-    }
-
-    function watchCoordinates() {
-        return dispatch => {
-            geolocationProvider.watchCoordinates(coordinates => {
-                dispatch(setCurrentPosition(coordinates));
+                return Promise.all(operations)
+            })
+            .then(() => pointRepository.retrieveAll())
+            .then(list => dispatch({
+                type: CHOOSE_POINT,
+                navigatingTo: newlyChosen,
+                list
+            }))
+            .then(() => {
+                dispatch(requestUpdates());
+                dispatch(pollOrientation());
+                dispatch(watchCoordinates());
+                dispatch(selectTab('navigation'));
             });
-        };
     }
+}
 
-    function stopWatchingCoordinates() {
+export function disregardPoint(point) {
+    return (dispatch, getState, { pointRepository }) => {
+        dispatch(keepAwakeToggle(false));
+        const newlyDisregarded = point.disregardForNavigation();
+        return pointRepository.store(newlyDisregarded)
+            .then(() => pointRepository.retrieveAll())
+            .then(list => dispatch({
+                type: DISREGARD_POINT,
+                list
+            }))
+            .then(() => {
+                dispatch(stopUpdates());
+                dispatch(stopPollingOrientation());
+                dispatch(stopWatchingCoordinates());
+                dispatch(selectTab('points'));
+            });
+    };
+}
+
+export function formPointName(name) {
+    return {
+        type: FORM_POINT_NAME,
+        name
+    };
+}
+
+export function showForm() {
+    return {
+        type: SHOW_FORM
+    };
+}
+
+export function hideForm() {
+    return {
+        type: HIDE_FORM
+    };
+}
+
+export function resetForm() {
+    return {
+        type: RESET_FORM
+    };
+}
+
+export function formMessage(message) {
+    return {
+        type: FORM_MESSAGE,
+        message
+    };
+}
+
+export function setCurrentPosition(currentCoordinates) {
+    const position = pointModel(assign(currentCoordinates, {
+        name: 'current'
+    }));
+    return {
+        type: SET_CURRENT_POSITION,
+        position
+    }
+}
+
+export function watchCoordinates() {
+    return (dispatch, getState, { geolocationProvider }) => {
+        geolocationProvider.watchCoordinates(coordinates => {
+            dispatch(setCurrentPosition(coordinates));
+        });
+    };
+}
+
+export function stopWatchingCoordinates() {
+    return (dispatch, getState, { geolocationProvider }) => {
         geolocationProvider.stopWatchingCoordinates();
-        return {
+        return dispatch({
             type: UNSET_CURRENT_POSITION
-        };
-    }
+        });
+    };
+}
 
-    function getCoordinates() {
-        return dispatch => {
-            return geolocationProvider.getCoordinates();
-        };
-    }
+export function getCoordinates() {
+    return (dispatch, getState, { geolocationProvider }) =>
+        geolocationProvider.getCoordinates();
 
-    function pollOrientation() {
-        return () => orientationProvider.startPolling();
-    }
+}
 
-    function requestOrientation() {
-        return {
+export function pollOrientation() {
+    return (dispatch, getState, { orientationProvider }) =>
+        orientationProvider.startPolling();
+}
+
+export function requestOrientation() {
+    return (dispatch, getState, { orientationProvider }) =>
+        dispatch({
             type: ALPHA_ROTATION,
             alphaRotation: orientationProvider.getHeading()
-        };
-    }
+        });
+}
 
-    function stopPollingOrientation() {
+export function stopPollingOrientation() {
+    return (dispatch, getState, { orientationProvider }) => {
         orientationProvider.stopPolling();
-        return {
+        return dispatch({
             type: ALPHA_ROTATION,
             alphaRotation: null
-        };
-    }
+        });
+    };
+}
 
-    function requestUpdates() {
-        return {
-            type: SHOULD_BE_UPDATING
-        };
-    }
-
-    function stopUpdates() {
-        return {
-            type: SHOULD_NOT_BE_UPDATING
-        };
-    }
-
+export function requestUpdates() {
     return {
-        selectTab, tabTransitionEnded, windowResize,
-        keepAwakeToggle,
-        initPoints, addPoint, removePoint, choosePoint, disregardPoint,
-        formPointName, showForm, hideForm, resetForm, formMessage,
-        watchCoordinates, stopWatchingCoordinates, getCoordinates,
-        pollOrientation, requestOrientation, stopPollingOrientation,
-        requestUpdates, stopUpdates
+        type: SHOULD_BE_UPDATING
+    };
+}
+
+export function stopUpdates() {
+    return {
+        type: SHOULD_NOT_BE_UPDATING
     };
 }

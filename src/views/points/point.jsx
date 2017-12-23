@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import autobind from '../../util/autobind';
+import * as actions from '../../redux/actions'
 
 class Point extends React.Component {
     constructor(props) {
@@ -10,13 +11,13 @@ class Point extends React.Component {
     }
     remove() {
         window.confirm(`Are you sure you want to remove point ${this.props.model.getName()}?`)
-        && this.props.dispatch(this.props.actions.removePoint(this.props.model));
+        && this.props.dispatch(actions.removePoint(this.props.model));
     }
     choose() {
-        this.props.dispatch(this.props.actions.choosePoint(this.props.model));
+        this.props.dispatch(actions.choosePoint(this.props.model));
     }
     disregard() {
-        this.props.dispatch(this.props.actions.disregardPoint(this.props.model));
+        this.props.dispatch(actions.disregardPoint(this.props.model));
     }
     render() {
         const p = this.props.model.serialize();
